@@ -1,0 +1,9 @@
+version: 5
+
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRESS_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
