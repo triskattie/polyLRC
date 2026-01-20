@@ -1,15 +1,10 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
 import uvicorn
+from src.api.routers import health
 
 app = FastAPI()
 
-class HealthCheck(BaseModel):
-    status: str = "OK"
-
-@app.get("/health")
-async def healthcheck():
-    return HealthCheck(status="OK")
+app.include_router(health.router)
 
 
 def main():
