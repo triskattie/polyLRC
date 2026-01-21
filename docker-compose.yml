@@ -1,17 +1,26 @@
-version: 5
-
 services:
   db:
     image: postgres:18
     env_file:
       - .env
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
-
+  api:
+    build: .
+    command: uvicorn src.main:app --reload --host 0.0.0.0
+    env_file:
+      - .env
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - .:/app:Z
+    depends_on:
+      - db
+    restart: on-failure
 volumes:
-  - postgres_data:
+  postgres_data:
