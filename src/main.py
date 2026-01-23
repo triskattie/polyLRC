@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
-from src.api.routers import health
+from src.api.routers import routers
 from src.db.redis import redis_manager
 
 
@@ -17,4 +17,5 @@ async def root():
     hits = await redis_manager.redis_pool.incr("hits")
     return {"message": f"This page has been viewed {hits} times"}
 
-app.include_router(health.router)
+for router in routers:
+    app.include_router(router)
