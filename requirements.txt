@@ -5,3 +5,6 @@ psycopg[binary,pool]
 python-dotenv
 alembic
 redis
+bcrypt
+python-jose[cryptography]
+email-validator
