@@ -6,3 +6,6 @@ class InvalidLogin(Exception):
 
 class InvalidRefreshToken(Exception):
     pass
+
+class InvalidAccessToken(Exception):
+    pass
