@@ -17,16 +17,18 @@ def get_password_hash(password):
     ).decode("utf-8")
 
 def generate_access_token(user_id: uuid.UUID, role: str):
+    jti = str(uuid.uuid4())
     payload = {
         "sub": str(user_id),
         "role": role,
         "type": "access",
+        "jti": jti,
         "iat": datetime.now(tz=timezone.utc),
         "exp": datetime.now(tz=timezone.utc) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES),
     }
 
     token = jwt.encode(payload, SECRET_KEY, algorithm=JWT_ALGORITHM)
-    return token
+    return token, jti
 
 def generate_refresh_token(user_id: uuid.UUID, token_id: uuid.UUID | None = None):
     jti = token_id or uuid.uuid4()

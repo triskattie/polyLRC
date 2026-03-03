@@ -14,4 +14,16 @@ class RedisManager:
         if self.redis_pool:
             await self.redis_pool.close()
 
+    async def store_access_token(self, jti: str, user_id: str, expires_minutes: int):
+        key = f"access:{jti}"
+        await self.redis_pool.setex(key, expires_minutes, str(user_id))
+
+    async def revoke_access_token(self, jti: str):
+        key = f"access:{jti}"
+        await self.redis_pool.delete(key)
+
+    async def is_access_token(self, jti: str):
+        key = f"access{jti}"
+        return await self.redis_pool.exists(key) > 0
+
 redis_manager = RedisManager()

@@ -4,15 +4,21 @@ from src.core.security import generate_access_token, generate_refresh_token, che
 from src.core.errors import EmailAlreadyExists, InvalidLogin, InvalidRefreshToken
 from datetime import datetime, timezone
 from uuid import UUID
+from src.db.redis import redis_manager
+import os
+
+
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
 async def register_user_service(db: AsyncSession, email: str, password: str):
     new_user = await create_user(db, email=email, password=password)
     if not new_user:
         raise EmailAlreadyExists()
-    access_token = generate_access_token(
+    access_token, a_jti = generate_access_token(
         user_id=new_user.id,
         role=new_user.role
     )
+    await redis_manager.store_access_token(jti=a_jti, user_id=new_user.id, expires_minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     refresh_token, jti, expires_at = generate_refresh_token(user_id=new_user.id)
     await create_refresh_token(db, user_id=new_user.id, token=refresh_token, jti=jti, expires_at=expires_at)
     return access_token, refresh_token
@@ -25,10 +31,11 @@ async def login_user_service(db: AsyncSession, email: str, password: str):
     if not check_password(password, db_user.password_hash):
         raise InvalidLogin()
 
-    access_token = generate_access_token(
+    access_token, a_jti = generate_access_token(
         user_id=db_user.id,
         role=db_user.role
     )
+    await redis_manager.store_access_token(jti=a_jti, user_id=db_user.id, expires_minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     refresh_token, jti, expires_at = generate_refresh_token(user_id=db_user.id)
     await create_refresh_token(db, db_user.id, token=refresh_token, jti=jti, expires_at=expires_at)
     return access_token, refresh_token
@@ -64,7 +71,8 @@ async def refresh_service(db: AsyncSession, refresh_token: str):
     if not user:
         raise InvalidRefreshToken()
     user_id = user.id
-    new_access = generate_access_token(user_id=db_token.user_id, role=user.role)
+    new_access, a_jti = generate_access_token(user_id=db_token.user_id, role=user.role)
+    await redis_manager.store_access_token(jti=a_jti, user_id=user_id, expires_minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     refresh_token, jti, expires_at = generate_refresh_token(user_id=user_id)
     await create_refresh_token(db, user_id=user_id, token=refresh_token, jti=jti, expires_at=expires_at)
     return new_access, refresh_token
