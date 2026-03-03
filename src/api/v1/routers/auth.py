@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends, status
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from jose import JWTError
 
 from src.db.deps import get_db
@@ -13,10 +13,10 @@ from src.core.errors import EmailAlreadyExists, InvalidLogin, InvalidRefreshToke
 router = APIRouter(prefix="/auth")
 
 @router.post("/register", response_model=TokenResponse)
-def register(payload: UserCreate, db: Session = Depends(get_db)):
+async def register(payload: UserCreate, db: AsyncSession = Depends(get_db)):
     try:
-        with db.begin():
-            access, refresh = register_user_service(db, email=payload.email, password=payload.password)
+        async with db.begin():
+            access, refresh = await register_user_service(db, email=payload.email, password=payload.password)
         return TokenResponse(
             access_token=access,
             refresh_token=refresh,
@@ -31,10 +31,10 @@ def register(payload: UserCreate, db: Session = Depends(get_db)):
 
 
 @router.post("/login", response_model=TokenResponse)
-def login_user(payload: UserLogin, db: Session = Depends(get_db)):
+async def login_user(payload: UserLogin, db: AsyncSession = Depends(get_db)):
     try:
-        with db.begin():
-            access, refresh = login_user_service(db, email=payload.email, password=payload.password)
+        async with db.begin():
+            access, refresh = await login_user_service(db, email=payload.email, password=payload.password)
         return TokenResponse(
             access_token=access,
             refresh_token=refresh,
@@ -47,10 +47,10 @@ def login_user(payload: UserLogin, db: Session = Depends(get_db)):
         )
 
 @router.post("/refresh", response_model=TokenResponse)
-def refresh_tokens(payload: RefreshRequest, db: Session = Depends(get_db)):
+async def refresh_tokens(payload: RefreshRequest, db: AsyncSession = Depends(get_db)):
     try:       
-        with db.begin():
-            access, refresh = refresh_service(db=db, refresh_token=payload.refresh_token)
+        async with db.begin():
+            access, refresh = await refresh_service(db=db, refresh_token=payload.refresh_token)
         return TokenResponse(
             access_token=access,
             refresh_token=refresh,
