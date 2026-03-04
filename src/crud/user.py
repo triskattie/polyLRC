@@ -40,4 +40,4 @@ async def get_refresh_token_by_hash(db: AsyncSession, refresh_token_hash):
 
 async def revoke_refresh_token(db: AsyncSession, token: RefreshToken):
     token.revoked = True
-    db.flush()
+    await db.flush()
