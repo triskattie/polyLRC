@@ -10,8 +10,7 @@ router = APIRouter(prefix="/wallet")
 @router.get("")
 async def wallet_endpoint(user = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     try:
-        async with db.begin():
-            return wallet_service(user_id=user.user_id, db=db)
+        return await wallet_service(user_id=user.user_id, db=db)
     except WalletNotFound:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
