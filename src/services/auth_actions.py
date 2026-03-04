@@ -6,6 +6,8 @@ from datetime import datetime, timezone
 from uuid import UUID
 from src.db.redis import redis_manager
 import os
+from src.crud.wallet import create_wallet
+from jose import JWTError
 
 
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
@@ -14,6 +16,9 @@ async def register_user_service(db: AsyncSession, email: str, password: str):
     new_user = await create_user(db, email=email, password=password)
     if not new_user:
         raise EmailAlreadyExists()
+
+    await create_wallet(user_id=new_user.id, db=db)
+    
     access_token, a_jti = generate_access_token(
         user_id=new_user.id,
         role=new_user.role
