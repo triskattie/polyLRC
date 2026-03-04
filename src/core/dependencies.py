@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.db.deps import get_db
 from src.core.security import oauth2_scheme
-from src.services.auth_guard import get_current_user_service
+from src.services.auth_validation import get_current_user_service
 from src.core.errors import InvalidAccessToken
 
 

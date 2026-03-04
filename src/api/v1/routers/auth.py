@@ -6,7 +6,7 @@ from src.db.deps import get_db
 from src.schemas.user import UserCreate, UserLogin
 from src.schemas.auth import TokenResponse, RefreshRequest
 from src.core.security import decode_jwt
-from src.services.auth import register_user_service, login_user_service, refresh_service
+from src.services.auth_actions import register_user_service, login_user_service, refresh_service
 from src.core.errors import EmailAlreadyExists, InvalidLogin, InvalidRefreshToken
 
 
