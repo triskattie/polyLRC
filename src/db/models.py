@@ -3,6 +3,7 @@ from src.db.base import Base
 from sqlalchemy.sql import func
 from uuid import uuid4
 from enum import Enum
+from sqlalchemy.orm import relationship
 
 class TransactionType(Enum):
     FAUCET = "FAUCET"
@@ -15,7 +16,7 @@ class User(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     email = Column(String, unique=True, nullable=False)
     password_hash = Column(String, nullable=False)
-    role = Column(String, default="user")
+    role = Column(String, default="user", nullable=False)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, server_default=func.now())
 
@@ -50,3 +51,26 @@ class WalletTransaction(Base):
     related_market_id = Column(UUID(as_uuid=True), nullable=True) # For adding foreign key to markets later
 
     created_at = Column(DateTime, server_default=func.now())
+
+User.wallet = relationship(
+    "Wallet",
+    back_populates="user",
+    uselist=False,
+    cascade="all, delete-orphan"
+)
+
+Wallet.user = relationship(
+    "User",
+    back_populates="wallet"
+)
+
+Wallet.transactions = relationship(
+    "WalletTransaction",
+    back_populates="wallet",
+    cascade="all, delete-orphan"
+)
+
+WalletTransaction.wallet = relationship(
+    "Wallet",
+    back_populates="transactions"
+)
