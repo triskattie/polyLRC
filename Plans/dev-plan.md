@@ -39,3 +39,22 @@ Security
 - Password hashing with bcrypt
 - Temporary access tokens
 - Refresh token rotation
+
+## Phase 3 - Wallets
+### Backend
+Models
+- > wallets
+- > wallet_transactions
+
+Features
+- Faucet on registration
+- Get wallet balance
+- Credit + debit helper functions
+
+Rules
+- No balance column
+- Balance = sum of all transactions
+
+Endpoints
+- GET /wallet
+- POST /wallet/faucet
