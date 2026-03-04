@@ -9,3 +9,6 @@ class InvalidRefreshToken(Exception):
 
 class InvalidAccessToken(Exception):
     pass
+
+class WalletNotFound(Exception):
+    pass

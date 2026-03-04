@@ -1,11 +1,11 @@
-from sqlalchemy import String, Integer, Column, Boolean, UUID, DateTime, ForeignKey, Numeric
+from sqlalchemy import String, Integer, Column, Boolean, UUID, DateTime, ForeignKey, Numeric, Enum
 from src.db.base import Base
 from sqlalchemy.sql import func
 from uuid import uuid4
-from enum import Enum
+from enum import Enum as PyEnum
 from sqlalchemy.orm import relationship
 
-class TransactionType(Enum):
+class TransactionType(PyEnum):
     FAUCET = "FAUCET"
     TRADE = "TRADE"
     ADMIN_ADJUST = "ADMIN_ADJUST"
@@ -24,7 +24,7 @@ class RefreshToken(Base):
     __tablename__ = "refresh_tokens"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
-    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True)
 
     token_hash = Column(String, nullable=False)
     expires_at = Column(DateTime, nullable=False)
