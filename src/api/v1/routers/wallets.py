@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.services.wallets import wallet_service, faucet_service
 from src.core.errors import WalletNotFound
 
-router = APIRouter(prefix="/wallet")
+router = APIRouter(prefix="/wallet", tags=["v1:Wallets"])
 
 @router.get("")
 async def wallet_endpoint(user = Depends(get_current_user), db: AsyncSession = Depends(get_db)):

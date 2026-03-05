@@ -7,7 +7,7 @@ from src.services.auth_validation import get_current_user_service
 from src.core.errors import InvalidAccessToken
 
 
-router = APIRouter(prefix="/users", tags=["users"])
+router = APIRouter(prefix="/users", tags=["v1:Users"])
 
 @router.get("/me", response_model=UserResponse)
 async def get_me(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)):

@@ -10,7 +10,7 @@ from src.services.auth_actions import register_user_service, login_user_service,
 from src.core.errors import EmailAlreadyExists, InvalidLogin, InvalidRefreshToken
 
 
-router = APIRouter(prefix="/auth")
+router = APIRouter(prefix="/auth", tags=["v1:Authentication"])
 
 @router.post("/register", response_model=TokenResponse)
 async def register(payload: UserCreate, db: AsyncSession = Depends(get_db)):
