@@ -58,3 +58,24 @@ Rules
 Endpoints
 - GET /wallet
 - POST /wallet/faucet
+
+## Phase 4 - Market creation
+### Backend
+Models
+- > markets
+- > market_outcomes
+
+Features
+- Create market
+- Different market states
+- Market description with markdown, saved as plain text
+- Open / close timestamps
+
+Rules
+- Only OPEN markets accept orders
+- No editing after OPEN
+
+Endpoints
+- GET /markets
+- GET /markets/{id}
+- POST /markets
