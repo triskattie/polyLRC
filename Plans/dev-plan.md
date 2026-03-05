@@ -79,3 +79,4 @@ Endpoints
 - GET /markets
 - GET /markets/{id}
 - POST /markets
+- PATCH /markets/{id}
