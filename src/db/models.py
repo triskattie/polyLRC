@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer, Column, Boolean, UUID, DateTime, ForeignKey, Numeric, Enum
+from sqlalchemy import String, Integer, Column, Boolean, UUID, DateTime, ForeignKey, Numeric, Enum, Text
 from src.db.base import Base
 from sqlalchemy.sql import func
 from uuid import uuid4
@@ -10,6 +10,11 @@ class TransactionType(PyEnum):
     TRADE = "TRADE"
     ADMIN_ADJUST = "ADMIN_ADJUST"
 
+class MarketState(PyEnum):
+    PRE = "PRE"
+    OPEN = "OPEN"
+    CLOSED = "CLOSED"
+    RESOLVED = "RESOLVED"
 
 class User(Base):
     __tablename__ = "users"
@@ -73,4 +78,44 @@ Wallet.transactions = relationship(
 WalletTransaction.wallet = relationship(
     "Wallet",
     back_populates="transactions"
+)
+
+class Market(Base):
+    __tablename__ = "markets"
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    creator_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+
+    title = Column(String(255), nullable=False)
+    description = Column(Text, nullable=False)
+    state = Column(Enum(MarketState), default=MarketState.PRE, nullable=False)
+
+    open_timestamp = Column(DateTime, nullable=True)
+    closed_timestamp = Column(DateTime, nullable=True)
+
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+
+class MarketOutcome(Base):
+    __tablename__ = "market_outcomes"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    market_id = Column(UUID(as_uuid=True), ForeignKey("markets.id", ondelete="CASCADE"), nullable=False)
+
+    name = Column(String(255), nullable=False)
+    description = Column(Text, nullable=True)
+
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+
+Market.outcomes = relationship(
+    "MarketOutcome",
+    back_populates="market",
+    cascade="all, delete-orphan"
+)
+
+MarketOutcome.market = relationship(
+    "Market",
+    back_populates="outcomes"
 )
