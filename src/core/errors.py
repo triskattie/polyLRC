@@ -12,3 +12,6 @@ class InvalidAccessToken(Exception):
 
 class WalletNotFound(Exception):
     pass
+
+class FaucetCooldown(Exception):
+    pass

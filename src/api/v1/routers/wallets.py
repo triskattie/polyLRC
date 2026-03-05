@@ -3,7 +3,7 @@ from src.core.dependencies import get_current_user
 from src.db.deps import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.services.wallets import wallet_service, faucet_service
-from src.core.errors import WalletNotFound
+from src.core.errors import WalletNotFound, FaucetCooldown
 from src.schemas.wallet import WalletResponse
 
 router = APIRouter(prefix="/wallet", tags=["v1:Wallets"])
@@ -35,4 +35,9 @@ async def faucet_endpoint(user = Depends(get_current_user), db: AsyncSession = D
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="wallet not found"
+        )
+    except FaucetCooldown:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="faucet already claimed"
         )
