@@ -15,3 +15,6 @@ class WalletNotFound(Exception):
 
 class FaucetCooldown(Exception):
     pass
+
+class MissingPermission(Exception):
+    pass
