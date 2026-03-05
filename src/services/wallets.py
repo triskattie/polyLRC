@@ -13,14 +13,12 @@ async def wallet_service(user_id: str, db: AsyncSession):
     if not wallet:
         raise WalletNotFound()
     balance = await get_balance(wallet_id=wallet.id, db=db)
-    return WalletResponse(
-        user_id=user_id,
-        balance=balance
-    )
+    return wallet.id, balance
 
 async def faucet_service(user_id: str, db: AsyncSession):
     wallet = await get_wallet_by_user(user_id=UUID(user_id), db=db)
     if not wallet:
         raise WalletNotFound()
     transaction = await create_transaction(wallet_id=wallet.id, amount=Decimal(FAUCET_AMOUNT), type="FAUCET", db=db)
-    return transaction
+    balance = await get_balance(wallet_id=wallet.id, db=db)
+    return wallet.id, balance
