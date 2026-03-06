@@ -30,9 +30,15 @@ class MarketResponse(BaseModel):
     id: UUID
     title: str
     description: str
-    status: MarketState
+    state: MarketState
     open_timestamp: datetime | None
     closed_timestamp: datetime | None
     created_at: datetime
     updated_at: datetime
     outcomes: list[MarketOutcomeResponse]
+
+class MarketsPageResponse(BaseModel):
+    markets: list[MarketResponse]
+    total: int
+    limit: int
+    offset: int

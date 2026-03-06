@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.dependencies import get_current_user
 from src.db.deps import get_db
-from src.schemas.market import MarketCreation, MarketCreationResponse, MarketId, MarketResponse
-from src.services.markets import market_creation_service, market_by_id_service
+from src.schemas.market import MarketCreation, MarketCreationResponse, MarketId, MarketResponse, MarketsPageResponse
+from src.services.markets import market_creation_service, market_by_id_service, markets_service
 from src.core.errors import MissingPermission, MarketNotFound
 from uuid import UUID
+from src.db.models import MarketState
 
 router = APIRouter(prefix="/markets", tags=["v1:Markets"])
 
@@ -25,6 +26,11 @@ async def market_creation_endpoint(payload: MarketCreation, user = Depends(get_c
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         )
+
+@router.get("", response_model=MarketsPageResponse)
+async def markets_endpoint(limit: int = Query(20, gt=0, le=100), offset: int = Query(0, ge=0), state: MarketState | None = None, user = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    result = await markets_service(limit=limit, offset=offset, state=state, db=db)
+    return result
 
 @router.get("/{market_id}", response_model=MarketResponse)
 async def market_by_id_endpoint(market_id: UUID, user = Depends(get_current_user), db: AsyncSession = Depends(get_db)):

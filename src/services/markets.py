@@ -2,7 +2,7 @@ from src.schemas.market import MarketCreation, MarketCreationResponse, MarketRes
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.crud.user import get_user_by_uuid
-from src.crud.market import create_market, create_outcome, get_market_by_id
+from src.crud.market import create_market, create_outcome, get_market_by_id, get_markets
 from src.core.errors import MissingPermission, MarketNotFound
 from datetime import datetime, timezone
 
@@ -44,6 +44,15 @@ async def market_creation_service(payload: MarketCreation, creator_id: UUID, db:
         outcome_ids=outcomes
     )
 
+async def markets_service(limit: int, offset: int, state: str | None, db: AsyncSession):
+    markets, total = await get_markets(limit=limit, offset=offset, state=state, db=db)
+    return {
+        "markets": markets,
+        "total": total,
+        "limit": limit,
+        "offset": offset
+    }
+
 async def market_by_id_service(market_id: UUID, db: AsyncSession):
     market = await get_market_by_id(market_id=market_id, db=db)
     if not market:
@@ -59,7 +68,7 @@ async def market_by_id_service(market_id: UUID, db: AsyncSession):
         id=market.id,
         title=market.title,
         description=market.description,
-        status=market.state,
+        state=market.state,
         open_timestamp=market.open_timestamp,
         closed_timestamp=market.closed_timestamp,
         created_at=market.created_at,
