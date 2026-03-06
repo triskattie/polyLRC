@@ -2,6 +2,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from datetime import datetime
 from src.db.models import Market, MarketOutcome
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 async def create_market(
     creator_id: UUID, 
@@ -31,3 +33,7 @@ async def create_outcome(market_id: UUID, name: str, description: str, db: Async
     db.add(outcome)
     await db.flush()
     return outcome
+
+async def get_market_by_id(market_id: UUID, db: AsyncSession):
+    result = await db.execute(select(Market).options(selectinload(Market.outcomes)).where(Market.id == market_id))
+    return result.scalar_one_or_none()

@@ -18,3 +18,6 @@ class FaucetCooldown(Exception):
 
 class MissingPermission(Exception):
     pass
+
+class MarketNotFound(Exception):
+    pass
