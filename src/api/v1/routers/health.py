@@ -7,10 +7,10 @@ from src.db.deps import get_db
 router = APIRouter(prefix="/health", tags=["v1:Health"])
 
 @router.get("")
-def health():
+async def health():
     return {"status": "ok"}
 
 @router.get("/db")
-def db_health(db: AsyncSession = Depends(get_db)):
-    db.execute(text("SELECT 1"))
+async def db_health(db: AsyncSession = Depends(get_db)):
+    await db.execute(text("SELECT 1"))
     return {"status": "ok"}

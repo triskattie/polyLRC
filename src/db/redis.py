@@ -14,7 +14,7 @@ class RedisManager:
 
     async def disconnect(self):
         if self.redis_pool:
-            await self.redis_pool.close()
+            await self.redis_pool.aclose()
 
     async def store_access_token(self, jti: str, user_id: str, expires_minutes: int):
         key = f"access:{jti}"
