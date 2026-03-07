@@ -80,3 +80,33 @@ Endpoints
 - GET /markets/{id}
 - POST /markets
 - PATCH /markets/{id}
+
+## Phase 5 - Orders, trading engine and testing
+### Backend
+Testing
+- Add pytest for all critical flows
+
+Models
+- > orders
+- > trades
+
+Order types
+- Only limit orders
+- Buy / sell
+- One outcome per order
+
+Matching engine
+- Price-time priority
+- Single process
+
+Flow
+1. Lock market
+2. Fetch best opposing order
+3. Match amounts
+4. Write trades
+5. Update wallets
+6. Update order statuses
+
+Endpoints
+- POST /orders
+- GET /markets/{id}/orderbook
