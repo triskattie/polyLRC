@@ -21,3 +21,6 @@ class MissingPermission(Exception):
 
 class MarketNotFound(Exception):
     pass
+
+class MarketOpen(Exception):
+    pass

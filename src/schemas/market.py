@@ -42,3 +42,16 @@ class MarketsPageResponse(BaseModel):
     total: int
     limit: int
     offset: int
+
+class MarketOutcomeUpdate(BaseModel):
+    id: UUID | None = None
+    name: str | None = None
+    description: str | None = None
+    delete: bool = False
+
+class MarketUpdate(BaseModel):
+    title: str | None = None
+    description: str | None = None
+    open_timestamp: datetime | None = None
+    closed_timestamp: datetime | None = None
+    outcomes: list[MarketOutcomeUpdate] | None = None

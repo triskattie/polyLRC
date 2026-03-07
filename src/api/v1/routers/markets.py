@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.dependencies import get_current_user
 from src.db.deps import get_db
-from src.schemas.market import MarketCreation, MarketCreationResponse, MarketId, MarketResponse, MarketsPageResponse
-from src.services.markets import market_creation_service, market_by_id_service, markets_service
-from src.core.errors import MissingPermission, MarketNotFound
+from src.schemas.market import MarketCreation, MarketCreationResponse, MarketId, MarketResponse, MarketsPageResponse, MarketUpdate
+from src.services.markets import market_creation_service, market_by_id_service, markets_service, patch_market_service
+from src.core.errors import MissingPermission, MarketNotFound, MarketOpen
 from uuid import UUID
 from src.db.models import MarketState
 
@@ -41,4 +41,31 @@ async def market_by_id_endpoint(market_id: UUID, user = Depends(get_current_user
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="market was not found"
+        )
+
+@router.patch("/{market_id}", response_model=MarketResponse)
+async def patch_market_endpoint(market_id: UUID, payload: MarketUpdate, user = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    try:
+        async with db.begin():
+            market = await patch_market_service(market_id=market_id, payload=payload, user_id=user.user_id, db=db)
+        return market
+    except MissingPermission:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="not authorized to modify markets"
+        )
+    except MarketNotFound:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="market was not found"
+        )
+    except MarketOpen:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="can't modify markets after opening"
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
         )

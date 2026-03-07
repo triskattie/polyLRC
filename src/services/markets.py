@@ -1,10 +1,11 @@
-from src.schemas.market import MarketCreation, MarketCreationResponse, MarketResponse, MarketOutcomeResponse
+from src.schemas.market import MarketCreation, MarketCreationResponse, MarketResponse, MarketOutcomeResponse, MarketUpdate
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.crud.user import get_user_by_uuid
-from src.crud.market import create_market, create_outcome, get_market_by_id, get_markets
-from src.core.errors import MissingPermission, MarketNotFound
+from src.crud.market import create_market, create_outcome, get_market_by_id, get_markets, patch_market
+from src.core.errors import MissingPermission, MarketNotFound, MarketOpen
 from datetime import datetime, timezone
+from src.db.models import MarketState
 
 async def market_creation_service(payload: MarketCreation, creator_id: UUID, db: AsyncSession):
     creator = await get_user_by_uuid(db=db, user_id=creator_id)
@@ -73,5 +74,34 @@ async def market_by_id_service(market_id: UUID, db: AsyncSession):
         closed_timestamp=market.closed_timestamp,
         created_at=market.created_at,
         updated_at=market.updated_at,
+        outcomes=outcomes_responses
+    )
+
+async def patch_market_service(market_id: UUID, payload: MarketUpdate, user_id: UUID, db: AsyncSession):
+    user = await get_user_by_uuid(db=db, user_id=user_id)
+    if user.role != "admin":
+        raise MissingPermission()
+    market = await get_market_by_id(market_id=market_id, db=db)
+    if not market:
+        raise MarketNotFound()
+    if market.state != MarketState.PRE:
+        raise MarketOpen()
+    new_market = await patch_market(market_id=market_id, payload=payload, db=db)
+    await db.refresh(new_market)
+    outcomes_responses = [MarketOutcomeResponse(
+        id=o.id,
+        name=o.name,
+        description=o.description
+    ) for o in new_market.outcomes]
+
+    return MarketResponse(
+        id=new_market.id,
+        title=new_market.title,
+        description=new_market.description,
+        state=new_market.state,
+        open_timestamp=new_market.open_timestamp,
+        closed_timestamp=new_market.closed_timestamp,
+        created_at=new_market.created_at,
+        updated_at=new_market.updated_at,
         outcomes=outcomes_responses
     )
