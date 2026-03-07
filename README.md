@@ -1,7 +1,7 @@
 # PolyLRC
 
-[![Python](https://img.shields.io/badge/python-3.13-blue)](https://www.python.org/)  
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.101.0-green)](https://fastapi.tiangolo.com/)  
+[![Python](https://img.shields.io/badge/python-3.13--slim-blue)](https://www.python.org/)  
+[![FastAPI](https://img.shields.io/pypi/v/fastapi?color=%2334D058&label=FastAPI)](https://fastapi.tiangolo.com/)  
 [![License](https://img.shields.io/badge/license-MIT-lightgrey)](LICENSE)
 
 Minimal prediction market platform built with **FastAPI**, **PostgreSQL**, and **Redis** for a computer science final project.  
@@ -9,7 +9,7 @@ Phases 1–4 are implemented: user authentication, wallet management, and market
 
 ---
 
-## Features Implemented (Phases 1–4)
+## Features Implemented
 
 ### 1. User Management
 - User registration and login
@@ -40,3 +40,122 @@ Phases 1–4 are implemented: user authentication, wallet management, and market
 - Docker + docker-compose support
 - Environment-based configuration
 - Health check endpoints (`GET /health`, `GET /health/db`)
+
+---
+
+## Getting started
+
+### Requirements
+- Docker & docker-compose
+
+### Installation
+
+1. Clone the repository:
+```
+git clone https://github.com/triskattie/polyLRC.git
+cd polyLRC
+```
+
+2. Create a .env file:
+```env
+POSTGRES_USER=postgres
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=polylrc
+DATABASE_URL=postgresql+psycopg://postgres:postgres@db:5432/polylrc
+REDIS_URL=redis://redis:6379/0
+
+ACCESS_TOKEN_EXPIRE_MINUTES=15
+REFRESH_TOKEN_EXPIRE_DAYS=30
+SECRET_KEY=generate-a-512-bit-random-key
+JWT_ALGORITHM=HS256
+
+FAUCET_AMOUNT=10
+FAUCET_COOLDOWN_MINUTES=1
+```
+
+Generate a secure `SECRET_KEY` by using:
+```bash
+openssl rand -hex 64
+```
+
+3. Build and start with Docker:
+```bash
+docker-compose up -d --build
+```
+
+4. Apply database migrations:
+```bash
+docker-compose exec api alembic upgrade head
+```
+
+5. Access API documentation:
+- Open http://localhost:8000/docs
+
+## Project structure
+```text
+src
+├── api
+│   ├── __init__.py
+│   └── v1
+│       ├── __init__.py
+│       └── routers
+│           ├── auth.py
+│           ├── health.py
+│           ├── __init__.py
+│           ├── markets.py
+│           ├── users.py
+│           └── wallets.py
+├── core
+│   ├── dependencies.py
+│   ├── errors.py
+│   ├── __init__.py
+│   └── security.py
+├── crud
+│   ├── __init__.py
+│   ├── market.py
+│   ├── user.py
+│   └── wallet.py
+├── db
+│   ├── base.py
+│   ├── deps.py
+│   ├── __init__.py
+│   ├── models.py
+│   ├── redis.py
+│   └── session.py
+├── __init__.py
+├── main.py
+├── schemas
+│   ├── auth.py
+│   ├── __init__.py
+│   ├── market.py
+│   ├── user.py
+│   └── wallet.py
+└── services
+    ├── auth_actions.py
+    ├── auth_validation.py
+    ├── __init__.py
+    ├── markets.py
+    └── wallets.py
+```
+
+## Implemented API endpoints
+### Authentication
+- `POST /auth/register`
+- `POST /auth/login`
+- `POST /auth/refresh`
+
+### Users
+- `GET /users/me`
+
+### Wallets
+- `GET /wallet`
+- `POST /wallet/faucet`
+
+### Markets
+- `POST /markets`
+- `GET /markets`
+- `GET /markets/{market_id}`
+- `PATCH /markets/{market_id}`
+
+## Contributing
+This project is currently not open to contributions.
