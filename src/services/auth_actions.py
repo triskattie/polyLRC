@@ -19,7 +19,7 @@ async def register_user_service(db: AsyncSession, email: str, password: str):
         raise EmailAlreadyExists()
 
     await create_wallet(user_id=new_user.id, db=db)
-    await faucet_service(user_id=str(new_user.id), db=db)
+    await faucet_service(user_id=new_user.id, db=db)
     
     access_token, a_jti = generate_access_token(
         user_id=new_user.id,

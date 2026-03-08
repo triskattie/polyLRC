@@ -5,6 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.services.wallets import wallet_service, faucet_service
 from src.core.errors import WalletNotFound, FaucetCooldown
 from src.schemas.wallet import WalletResponse
+from uuid import UUID
 
 router = APIRouter(prefix="/wallet", tags=["v1:Wallets"])
 

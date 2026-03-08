@@ -31,7 +31,7 @@ async def get_current_user_service(db, token: str):
         raise InvalidAccessToken()
 
     user_response = UserResponse(
-        user_id=str(user.id),
+        user_id=user.id,
         email=user.email,
         role=user.role,
         created_at=user.created_at
