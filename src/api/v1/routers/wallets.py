@@ -25,8 +25,8 @@ async def wallet_endpoint(user = Depends(get_current_user), db: AsyncSession = D
 @router.post("/faucet", response_model=WalletResponse)
 async def faucet_endpoint(user = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     try:
-        async with db.begin():
-            wallet_id, balance = await faucet_service(user_id=user.user_id, db=db)
+        wallet_id, balance = await faucet_service(user_id=user.user_id, db=db)
+        await db.commit()
         return WalletResponse(
             wallet_id=wallet_id,
             balance=balance

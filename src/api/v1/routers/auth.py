@@ -15,8 +15,8 @@ router = APIRouter(prefix="/auth", tags=["v1:Authentication"])
 @router.post("/register", response_model=TokenResponse)
 async def register(payload: UserCreate, db: AsyncSession = Depends(get_db)):
     try:
-        async with db.begin():
-            access, refresh = await register_user_service(db, email=payload.email, password=payload.password)
+        access, refresh = await register_user_service(db, email=payload.email, password=payload.password)
+        await db.commit()
         return TokenResponse(
             access_token=access,
             refresh_token=refresh,
@@ -33,8 +33,8 @@ async def register(payload: UserCreate, db: AsyncSession = Depends(get_db)):
 @router.post("/login", response_model=TokenResponse)
 async def login_user(payload: UserLogin, db: AsyncSession = Depends(get_db)):
     try:
-        async with db.begin():
-            access, refresh = await login_user_service(db, email=payload.email, password=payload.password)
+        access, refresh = await login_user_service(db, email=payload.email, password=payload.password)
+        await db.commit()
         return TokenResponse(
             access_token=access,
             refresh_token=refresh,
@@ -49,8 +49,8 @@ async def login_user(payload: UserLogin, db: AsyncSession = Depends(get_db)):
 @router.post("/refresh", response_model=TokenResponse)
 async def refresh_tokens(payload: RefreshRequest, db: AsyncSession = Depends(get_db)):
     try:       
-        async with db.begin():
-            access, refresh = await refresh_service(db=db, refresh_token=payload.refresh_token)
+        access, refresh = await refresh_service(db=db, refresh_token=payload.refresh_token)
+        await db.commit()
         return TokenResponse(
             access_token=access,
             refresh_token=refresh,

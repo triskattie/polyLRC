@@ -13,8 +13,8 @@ router = APIRouter(prefix="/markets", tags=["v1:Markets"])
 @router.post("", response_model=MarketCreationResponse)
 async def market_creation_endpoint(payload: MarketCreation, user = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     try:
-        async with db.begin():
-            result = await market_creation_service(payload=payload, creator_id=user.user_id, db=db)
+        result = await market_creation_service(payload=payload, creator_id=user.user_id, db=db)
+        await db.commit()
         return result
     except MissingPermission:
         raise HTTPException(
@@ -46,8 +46,8 @@ async def market_by_id_endpoint(market_id: UUID, user = Depends(get_current_user
 @router.patch("/{market_id}", response_model=MarketResponse)
 async def patch_market_endpoint(market_id: UUID, payload: MarketUpdate, user = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     try:
-        async with db.begin():
-            market = await patch_market_service(market_id=market_id, payload=payload, user_id=user.user_id, db=db)
+        market = await patch_market_service(market_id=market_id, payload=payload, user_id=user.user_id, db=db)
+        await db.commit()
         return market
     except MissingPermission:
         raise HTTPException(

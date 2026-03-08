@@ -4,15 +4,14 @@ from src.db.deps import get_db
 from src.core.security import oauth2_scheme
 from src.services.auth_validation import get_current_user_service
 from src.core.errors import InvalidAccessToken
-from src.db.session import SessionLocal
 
 
 async def get_current_user(
     token: str = Depends(oauth2_scheme),
+    db: AsyncSession = Depends(get_db),
 ):
     try:
-        async with SessionLocal() as db:
-            return await get_current_user_service(db, token)
+        return await get_current_user_service(db, token)
     except InvalidAccessToken:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
