@@ -64,7 +64,10 @@ async def refresh_service(db: AsyncSession, refresh_token: str):
     if db_token.revoked:
         raise InvalidRefreshToken()
 
-    if db_token.expires_at <= now:
+    expires_at = db_token.expires_at
+    if expires_at.tzinfo is None:
+        expires_at = expires_at.replace(tzinfo=timezone.utc)
+    if expires_at <= now:
         raise InvalidRefreshToken()
 
     if UUID(payload["sub"]) != db_token.user_id:
