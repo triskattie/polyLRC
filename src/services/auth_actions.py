@@ -8,6 +8,7 @@ from src.db.redis import redis_manager
 import os
 from src.crud.wallet import create_wallet
 from jose import JWTError
+from src.services.wallets import faucet_service
 
 
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
@@ -18,6 +19,7 @@ async def register_user_service(db: AsyncSession, email: str, password: str):
         raise EmailAlreadyExists()
 
     await create_wallet(user_id=new_user.id, db=db)
+    await faucet_service(user_id=str(new_user.id), db=db)
     
     access_token, a_jti = generate_access_token(
         user_id=new_user.id,
