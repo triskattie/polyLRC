@@ -6,6 +6,7 @@ from sqlalchemy.pool import StaticPool
 from src.db.base import Base
 from src.db.deps import get_db
 from src.main import app
+from unittest.mock import AsyncMock, MagicMock
 
 
 @pytest_asyncio.fixture
@@ -35,7 +36,7 @@ async def db_session(db_engine):
         yield session
 
 @pytest_asyncio.fixture
-async def client(db_session):
+async def client(db_session, mock_redis):
     async def override_get_db():
         yield db_session
 
@@ -45,3 +46,16 @@ async def client(db_session):
     ) as ac:
         yield ac
     app.dependency_overrides.clear()
+
+@pytest.fixture
+def mock_redis(monkeypatch):
+    mock = MagicMock()
+    mock.store_access_token = AsyncMock()
+    mock.is_access_token = AsyncMock(return_value=True)
+    mock.claim_faucet = AsyncMock(return_value=True)
+    mock.connect = AsyncMock()
+    mock.disconnect = AsyncMock()
+    monkeypatch.setattr("src.services.auth_actions.redis_manager", mock)
+    monkeypatch.setattr("src.services.auth_validation.redis_manager", mock)
+    monkeypatch.setattr("src.services.wallets.redis_manager", mock)
+    return mock
