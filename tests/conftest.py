@@ -79,3 +79,31 @@ async def user_tokens(registered_user):
 @pytest.fixture
 async def auth_headers(user_tokens):
     return {"Authorization": f"Bearer {user_tokens['access_token']}"}
+
+@pytest.fixture
+async def admin_user(client, db_session):
+    email = "admin@example.com"
+    password = "4dminp4ssword"
+    response = await client.post(
+        "/v1/auth/register",
+        json={"email": email, "password": password}
+    )
+    assert response.status_code == 200
+    from sqlalchemy import text
+    await db_session.execute(
+        text("UPDATE users SET role = 'admin' WHERE email = :e"),
+        {"e": email}
+    )
+    await db_session.commit()
+
+    login_response = await client.post(
+        "/v1/auth/login",
+        json={"email": email, "password": password}
+    )
+    assert login_response.status_code == 200
+    return login_response.json(), email, password
+
+@pytest.fixture
+async def admin_headers(admin_user):
+    tokens, _, _ = admin_user
+    return {"Authorization": f"Bearer {tokens['access_token']}"}
