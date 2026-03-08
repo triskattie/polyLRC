@@ -9,6 +9,17 @@ Phases 1–4 are implemented: user authentication, wallet management, and market
 
 ---
 
+## Roadmap
+- [x] Phase 1 - Infrastructure (FastAPI, PostgreSQL, Redis, Alembic, health check)
+- [x] Phase 2 - Authentication (register, login, JWT access + refresh tokens, bcrypt)
+- [x] Phase 3 - Wallets (ledger-based balance, faucet, rate limiting)
+- [x] Phase 4 - Markets (create, list, get, patch, state machine, outcomes)
+- [ ] Phase 5 - Orders & matching engine (limit orders, price-time priority, partial fills)
+- [ ] Phase 6 - Resolution & settlement (admin resolves, winning outcome pays out)
+- [ ] Phase 7 - Frontend (login, market list, order placement, wallet balance, order book)
+
+---
+
 ## Features Implemented
 
 ### 1. User Management
@@ -46,12 +57,14 @@ Phases 1–4 are implemented: user authentication, wallet management, and market
 ## Getting started
 
 ### Requirements
-- Docker & docker-compose
+This project supports both Docker and Podman.
+- Docker & docker-compose, or
+- Podman & podman-compose (used in development on Fedora Silverblue)
 
 ### Installation
 
 1. Clone the repository:
-```
+```bash
 git clone https://github.com/triskattie/polyLRC.git
 cd polyLRC
 ```
@@ -72,24 +85,55 @@ JWT_ALGORITHM=HS256
 FAUCET_AMOUNT=10
 FAUCET_COOLDOWN_MINUTES=1
 ```
-
-Generate a secure `SECRET_KEY` by using:
+Generate a secure SECRET_KEY:
 ```bash
 openssl rand -hex 64
 ```
-
-3. Build and start with Docker:
+3. Build and start:
 ```bash
+# Docker
 docker-compose up -d --build
+# Podman
+podman compose up -d --build
 ```
 
 4. Apply database migrations:
 ```bash
-docker-compose exec api alembic upgrade head
+# Docker
+docker-compose exec -w /app api alembic upgrade head
+# Podman
+podman compose exec -w /app api alembic upgrade head
+```
+5. Access API documentation at http://localhost:8000/docs
+
+---
+
+## Testing
+
+The test suite uses pytest with SQLite in-memory, no extra containers needed.
+
+Install test dependencies:
+```bash
+# Docker
+docker-compose exec -w /app api pip install -r requirements-test.txt
+# Podman
+podman compose exec -w /app api pip install -r requirements-test.txt
 ```
 
-5. Access API documentation:
-- Open http://localhost:8000/docs
+Run every test:
+```bash
+# Docker
+docker-compose exec -w /app api pytest -v
+# Podman
+podman compose exec -w /app api pytest -v
+```
+
+Run only integration tests:
+```bash
+podman compose exec -w /app api pytest -m integration -v
+```
+
+---
 
 ## Project structure
 ```text
