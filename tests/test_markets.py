@@ -85,6 +85,7 @@ async def test_list_markets_empty(client, auth_headers):
     assert body["markets"] == []
     assert body["total"] == 0
 
+@pytest.mark.integration
 async def test_list_markets_after_creation(client, auth_headers, admin_headers):
     await client.post(
         "/v1/markets",
@@ -99,6 +100,7 @@ async def test_list_markets_after_creation(client, auth_headers, admin_headers):
     body = response.json()
     assert body["total"] == 1
 
+@pytest.mark.integration
 async def test_list_market_pagination(client, auth_headers, admin_headers):
     for i in range(5):
         await client.post(
@@ -115,6 +117,7 @@ async def test_list_market_pagination(client, auth_headers, admin_headers):
     assert len(body["markets"]) == 2
     assert body["total"] == 5
 
+@pytest.mark.integration
 async def test_get_market_by_id(client, auth_headers, admin_headers):
     create_response = await client.post(
         "/v1/markets",
@@ -140,6 +143,7 @@ async def test_get_market_not_found_returns_404(client, auth_headers):
     )
     assert response.status_code == 404
 
+@pytest.mark.integration
 async def test_patch_market_title(client, admin_headers):
     create_response = await client.post(
         "/v1/markets",

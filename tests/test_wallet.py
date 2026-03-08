@@ -42,6 +42,7 @@ async def test_faucet_unauthenticated_returns_401(client):
     )
     assert response.status_code == 401
 
+@pytest.mark.integration
 async def test_balance_is_sum_of_transactions(client, auth_headers, db_session):
     first = await client.post("/v1/wallet/faucet", headers=auth_headers)
     balance_after_one = float(first.json()["balance"])
