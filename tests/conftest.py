@@ -59,3 +59,23 @@ def mock_redis(monkeypatch):
     monkeypatch.setattr("src.services.auth_validation.redis_manager", mock)
     monkeypatch.setattr("src.services.wallets.redis_manager", mock)
     return mock
+
+@pytest.fixture
+async def registered_user(client):
+    email = "example@gmail.com"
+    password = "s3curepassword!"
+    response = await client.post(
+        "/v1/auth/register",
+        json={"email": email, "password": password}
+    )
+    assert response.status_code == 200
+    return response.json(), email, password
+
+@pytest.fixture
+async def user_tokens(registered_user):
+    tokens, _, _ = registered_user
+    return tokens
+
+@pytest.fixture
+async def auth_headers(user_tokens):
+    return {"Authorization": f"Bearer {user_tokens['access_token']}"}
