@@ -60,7 +60,7 @@ async def refresh_service(db: AsyncSession, refresh_token: str):
     if not db_token:
         raise InvalidRefreshToken()
 
-    now = datetime.utcnow()
+    now = datetime.now(tz=timezone.utc)
     if db_token.revoked:
         raise InvalidRefreshToken()
 

@@ -23,7 +23,7 @@ class User(Base):
     password_hash = Column(String, nullable=False)
     role = Column(String, default="user", nullable=False)
     is_active = Column(Boolean, default=True)
-    created_at = Column(DateTime, server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class RefreshToken(Base):
     __tablename__ = "refresh_tokens"
@@ -32,10 +32,10 @@ class RefreshToken(Base):
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
 
     token_hash = Column(String, nullable=False)
-    expires_at = Column(DateTime, nullable=False)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
     revoked = Column(Boolean, default=False)
 
-    created_at = Column(DateTime, server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class Wallet(Base):
     __tablename__ = "wallets"
@@ -43,7 +43,7 @@ class Wallet(Base):
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, unique=True)
 
-    created_at = Column(DateTime, server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 class WalletTransaction(Base):
     __tablename__ = "wallet_transactions"
@@ -55,7 +55,7 @@ class WalletTransaction(Base):
     type = Column(Enum(TransactionType, native_enum=False), nullable=False)
     related_market_id = Column(UUID(as_uuid=True), nullable=True) # For adding foreign key to markets later
 
-    created_at = Column(DateTime, server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
 
 User.wallet = relationship(
     "Wallet",
@@ -90,11 +90,11 @@ class Market(Base):
     description = Column(Text, nullable=False)
     state = Column(Enum(MarketState), default=MarketState.PRE, nullable=False)
 
-    open_timestamp = Column(DateTime, nullable=True)
-    closed_timestamp = Column(DateTime, nullable=True)
+    open_timestamp = Column(DateTime(timezone=True), nullable=True)
+    closed_timestamp = Column(DateTime(timezone=True), nullable=True)
 
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
 
 class MarketOutcome(Base):
@@ -106,8 +106,8 @@ class MarketOutcome(Base):
     name = Column(String(255), nullable=False)
     description = Column(Text, nullable=True)
 
-    created_at = Column(DateTime, server_default=func.now())
-    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now(), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
 Market.outcomes = relationship(
     "MarketOutcome",
