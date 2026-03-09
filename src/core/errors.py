@@ -24,3 +24,9 @@ class MarketNotFound(Exception):
 
 class MarketOpen(Exception):
     pass
+
+class MarketNotOpen(Exception):
+    pass
+
+class InsufficientFunds(Exception):
+    pass

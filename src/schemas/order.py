@@ -1,0 +1,26 @@
+from pydantic import BaseModel
+from uuid import UUID
+from src.db.models import OrderSide
+from decimal import Decimal
+
+class OrderInput(BaseModel):
+    market_id: UUID
+    outcome_id: UUID
+    side: OrderSide
+    amount: Decimal
+    price: Decimal
+
+class OrderResponse(BaseModel):
+    id: UUID
+    user_id: UUID
+    market_id: UUID
+    outcome_id: UUID
+    side: OrderSide
+    status: OrderStatus
+    price: Decimal
+    amount: Decimal
+    remaining: Decimal
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
