@@ -4,7 +4,7 @@ from src.core.dependencies import get_current_user
 from src.db.deps import get_db
 from src.schemas.market import MarketCreation, MarketCreationResponse, MarketId, MarketResponse, MarketsPageResponse, MarketUpdate
 from src.services.markets import market_creation_service, market_by_id_service, markets_service, patch_market_service
-from src.core.errors import MissingPermission, MarketNotFound, MarketOpen
+from src.core.errors import MissingPermission, MarketNotFound, MarketOpen, InvalidStateTransition
 from uuid import UUID
 from src.db.models import MarketState
 
@@ -58,6 +58,11 @@ async def patch_market_endpoint(market_id: UUID, payload: MarketUpdate, user = D
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="market was not found"
+        )
+    except InvalidStateTransition:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="invalid state transition"
         )
     except MarketOpen:
         raise HTTPException(

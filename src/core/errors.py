@@ -30,3 +30,6 @@ class MarketNotOpen(Exception):
 
 class InsufficientFunds(Exception):
     pass
+
+class InvalidStateTransition(Exception):
+    pass

@@ -84,8 +84,18 @@ async def patch_market_service(market_id: UUID, payload: MarketUpdate, user_id: 
     market = await get_market_by_id(market_id=market_id, db=db)
     if not market:
         raise MarketNotFound()
-    if market.state != MarketState.PRE:
-        raise MarketOpen()
+    if payload.state:
+        valid_transitions = {
+            MarketState.PRE: MarketState.OPEN,
+            MarketState.OPEN: MarketState.CLOSED,
+            MarketState.CLOSED: MarketState.RESOLVED,
+        }
+        if valid_transitions.get(market.state) != payload.state:
+            raise InvalidStateTransition()
+        market.state = payload.state
+    else:
+        if market.state != MarketState.PRE:
+            raise MarketOpen()
     new_market = await patch_market(market_id=market_id, payload=payload, db=db)
     await db.refresh(new_market)
     outcomes_responses = [MarketOutcomeResponse(

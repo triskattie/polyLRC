@@ -52,6 +52,7 @@ class MarketOutcomeUpdate(BaseModel):
 class MarketUpdate(BaseModel):
     title: str | None = None
     description: str | None = None
+    state: MarketState | None = None
     open_timestamp: datetime | None = None
     closed_timestamp: datetime | None = None
     outcomes: list[MarketOutcomeUpdate] | None = None
