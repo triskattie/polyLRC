@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from src.schemas.order import OrderInput, OrderResponse
-from core.dependencies import get_current_user
+from src.core.dependencies import get_current_user
 from src.db.deps import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.services.orders import create_order_service

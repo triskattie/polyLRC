@@ -1,7 +1,8 @@
 from pydantic import BaseModel
 from uuid import UUID
-from src.db.models import OrderSide
+from src.db.models import OrderSide, OrderStatus
 from decimal import Decimal
+from datetime import datetime
 
 class OrderInput(BaseModel):
     market_id: UUID

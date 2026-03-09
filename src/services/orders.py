@@ -6,6 +6,7 @@ from src.crud.wallet import get_balance, get_wallet_by_user, create_transaction
 from src.crud.order import get_resting_orders, upsert_position, create_trade, create_order
 from decimal import Decimal
 from uuid import UUID
+from sqlalchemy.ext.asyncio import AsyncSession
 
 async def create_order_service(payload: OrderInput, user_id: UUID, db: AsyncSession):
     market = await get_market_by_id(market_id=payload.market_id, db=db)
