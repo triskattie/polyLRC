@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from uuid import UUID
 from src.db.models import OrderSide, OrderStatus
 from decimal import Decimal
@@ -8,8 +8,8 @@ class OrderInput(BaseModel):
     market_id: UUID
     outcome_id: UUID
     side: OrderSide
-    amount: Decimal
-    price: Decimal
+    amount: Decimal = Field(gt=0)
+    price: Decimal = Field(gt=0, lt=1)
 
 class OrderResponse(BaseModel):
     id: UUID

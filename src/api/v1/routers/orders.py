@@ -4,7 +4,7 @@ from src.core.dependencies import get_current_user
 from src.db.deps import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.services.orders import create_order_service, get_order_service
-from src.core.errors import MarketNotFound, MarketNotOpen, OrderNotFound, OrderAccessDenied
+from src.core.errors import MarketNotFound, MarketNotOpen, OrderNotFound, OrderAccessDenied, OutcomeNotInMarket
 from uuid import UUID
 
 router = APIRouter(prefix="/orders", tags=["v1:Orders"])
@@ -26,10 +26,10 @@ async def create_order_endpoint(payload: OrderInput, user = Depends(get_current_
             status_code=status.HTTP_409_CONFLICT,
             detail="market is not open to orders"
         )
-    except ValueError as e:
+    except OutcomeNotInMarket:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=str(e)
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="outcome not in market"
         )
 
 @router.get("/{order_id}", response_model=OrderResponse)

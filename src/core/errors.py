@@ -39,3 +39,6 @@ class OrderNotFound(Exception):
 
 class OrderAccessDenied(Exception):
     pass
+
+class OutcomeNotInMarket(Exception):
+    pass

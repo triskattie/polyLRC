@@ -1,6 +1,6 @@
 from src.schemas.order import OrderInput
 from src.crud.market import get_market_by_id
-from src.core.errors import MarketNotFound, MarketNotOpen, InsufficientFunds, OrderNotFound, OrderAccessDenied
+from src.core.errors import MarketNotFound, MarketNotOpen, InsufficientFunds, OrderNotFound, OrderAccessDenied, OutcomeNotInMarket
 from src.db.models import MarketState, OrderSide, Order, TransactionType, OrderStatus
 from src.crud.wallet import get_balance, get_wallet_by_user, create_transaction
 from src.crud.order import get_resting_orders, upsert_position, create_trade, create_order, get_order_by_id
@@ -17,7 +17,7 @@ async def create_order_service(payload: OrderInput, user_id: UUID, db: AsyncSess
         raise MarketNotOpen()
 
     if payload.outcome_id not in [o.id for o in market.outcomes]:
-        raise ValueError("outcome not in market")
+        raise OutcomeNotInMarket()
     
     if payload.side == OrderSide.BUY:
         wallet = await get_wallet_by_user(user_id=user_id, db=db)
