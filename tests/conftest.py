@@ -107,3 +107,27 @@ async def admin_user(client, db_session):
 async def admin_headers(admin_user):
     tokens, _, _ = admin_user
     return {"Authorization": f"Bearer {tokens['access_token']}"}
+
+@pytest.fixture
+async def open_market(client, admin_headers):
+    VALID_MARKET = {
+        "title": "Will these tests fail?",
+        "description": "A simple yes or no valid_market.",
+        "outcomes": [
+            {"name": "Yes", "description": "The tests fail"},
+            {"name": "No", "description": "The tests succeed"}
+        ]
+    }
+    response = await client.post("/v1/markets", json=VALID_MARKET, headers=admin_headers)
+    assert response.status_code == 200
+    body = response.json()
+    market_id = body["market_id"]
+
+    patch = await client.patch(
+        f"/v1/markets/{market_id}",
+        json={"state": "OPEN"},
+        headers=admin_headers
+    )
+    assert patch.status_code == 200
+
+    return market_id, body["outcome_ids"]
