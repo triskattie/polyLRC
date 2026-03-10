@@ -183,10 +183,7 @@ async def test_patch_not_found_returns_404(client, admin_headers):
     )
     assert response.status_code == 404
 
-""" Postponed until state editing
 async def test_patch_open_market_returns_409(client, admin_headers, db_session):
-    from sqlalchemy import text
-
     create_response = await client.post(
         "/v1/markets",
         json=VALID_MARKET,
@@ -194,11 +191,11 @@ async def test_patch_open_market_returns_409(client, admin_headers, db_session):
     )
     market_id = create_response.json()["market_id"]
 
-    await db_session.execute(
-        text("UPDATE markets SET state = 'OPEN' WHERE id = :market_id"),
-        {"market_id": market_id}
+    await client.patch(
+        f"/v1/markets/{market_id}",
+        json={"state": "OPEN"},
+        headers=admin_headers
     )
-    await db_session.commit()
 
     response = await client.patch(
         f"/v1/markets/{market_id}",
@@ -206,4 +203,149 @@ async def test_patch_open_market_returns_409(client, admin_headers, db_session):
         headers=admin_headers
     )
     assert response.status_code == 409
-"""
+
+async def test_orderbook_empty_new_market(client, auth_headers, open_market):
+    market_id, outcome_ids = open_market
+    response = await client.get(
+        f"/v1/markets/{market_id}/orderbook/{outcome_ids[0]}",
+        headers=auth_headers
+    )
+    assert response.status_code == 200
+    assert response.json()["bids"] == []
+    assert response.json()["asks"] == []
+
+async def test_orderbook_resting_buy_order(client, auth_headers, open_market):
+    market_id, outcome_ids = open_market
+    await client.post(
+        "/v1/orders",
+        json={"market_id": market_id, "outcome_id": outcome_ids[0], "side": "BUY", "amount": 40, "price": 0.4},
+        headers=auth_headers
+    )
+    response = await client.get(
+        f"/v1/markets/{market_id}/orderbook/{outcome_ids[0]}",
+        headers=auth_headers
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body["bids"]) == 1
+
+async def test_orderbook_resting_sell_order(client, auth_headers, open_market):
+    market_id, outcome_ids = open_market
+    await client.post(
+        "/v1/orders",
+        json={"market_id": market_id, "outcome_id": outcome_ids[0], "side": "SELL", "amount": 40, "price": 0.4},
+        headers=auth_headers
+    )
+    response = await client.get(
+        f"/v1/markets/{market_id}/orderbook/{outcome_ids[0]}",
+        headers=auth_headers
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body["asks"]) == 1
+
+async def test_orderbook_filled_get_removed(client, auth_headers, open_market):
+    market_id, outcome_ids = open_market
+    await client.post(
+        "/v1/orders",
+        json={"market_id": market_id, "outcome_id": outcome_ids[0], "side": "SELL", "amount": 40, "price": 0.4},
+        headers=auth_headers
+    )
+    await client.post(
+        "/v1/orders",
+        json={"market_id": market_id, "outcome_id": outcome_ids[0], "side": "BUY", "amount": 60, "price": 0.4},
+        headers=auth_headers
+    )
+    response = await client.get(
+        f"/v1/markets/{market_id}/orderbook/{outcome_ids[0]}",
+        headers=auth_headers
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body["asks"]) == 0
+    assert len(body["bids"]) == 1
+
+async def test_orderbook_bids_highest_price_first(client, auth_headers, open_market):
+    market_id, outcome_ids = open_market
+    await client.post(
+        "/v1/orders",
+        json={"market_id": market_id, "outcome_id": outcome_ids[0], "side": "BUY", "amount": 40, "price": 0.4},
+        headers=auth_headers
+    )
+    await client.post(
+        "/v1/orders",
+        json={"market_id": market_id, "outcome_id": outcome_ids[0], "side": "BUY", "amount": 60, "price": 0.5},
+        headers=auth_headers
+    )
+    response = await client.get(
+        f"/v1/markets/{market_id}/orderbook/{outcome_ids[0]}",
+        headers=auth_headers
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["bids"][0]["price"] > body["bids"][1]["price"]
+
+async def test_orderbook_asks_lowest_price_first(client, auth_headers, open_market):
+    market_id, outcome_ids = open_market
+    await client.post(
+        "/v1/orders",
+        json={"market_id": market_id, "outcome_id": outcome_ids[0], "side": "SELL", "amount": 40, "price": 0.4},
+        headers=auth_headers
+    )
+    await client.post(
+        "/v1/orders",
+        json={"market_id": market_id, "outcome_id": outcome_ids[0], "side": "SELL", "amount": 60, "price": 0.5},
+        headers=auth_headers
+    )
+    response = await client.get(
+        f"/v1/markets/{market_id}/orderbook/{outcome_ids[0]}",
+        headers=auth_headers
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["asks"][0]["price"] < body["asks"][1]["price"]
+
+async def test_orderbook_partial_orders_show_remaining(client, auth_headers, open_market):
+    market_id, outcome_ids = open_market
+    await client.post(
+        "/v1/orders",
+        json={"market_id": market_id, "outcome_id": outcome_ids[0], "side": "BUY", "amount": 40, "price": 0.5},
+        headers=auth_headers
+    )
+    await client.post(
+        "/v1/orders",
+        json={"market_id": market_id, "outcome_id": outcome_ids[0], "side": "SELL", "amount": 60, "price": 0.4},
+        headers=auth_headers
+    )
+    response = await client.get(
+        f"/v1/markets/{market_id}/orderbook/{outcome_ids[0]}",
+        headers=auth_headers
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert float(body["asks"][0]["remaining"]) == 20
+
+async def test_orderbook_unauthenticated_returns_401(client, open_market):
+    market_id, outcome_ids = open_market
+    response = await client.get(
+        f"/v1/markets/{market_id}/orderbook/{outcome_ids[0]}"
+    )
+    assert response.status_code == 401
+
+async def test_orderbook_market_not_found_returns_404(client, auth_headers, open_market):
+    _, outcome_ids = open_market
+    market_id = "00000000-0000-0000-0000-000000000000"
+    response = await client.get(
+        f"/v1/markets/{market_id}/orderbook/{outcome_ids[0]}",
+        headers=auth_headers
+    )
+    assert response.status_code == 404
+
+async def test_orderbook_outcome_not_in_market_returns_404(client, auth_headers, open_market):
+    market_id, _ = open_market
+    outcome_id = "00000000-0000-0000-0000-000000000000"
+    response = await client.get(
+        f"/v1/markets/{market_id}/orderbook/{outcome_id}",
+        headers=auth_headers
+    )
+    assert response.status_code == 404
