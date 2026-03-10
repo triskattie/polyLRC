@@ -123,6 +123,8 @@ async def open_market(client, admin_headers):
     body = response.json()
     market_id = body["market_id"]
 
+    await client.post(f"/v1/markets/{market_id}/seed", json={"amount": 1000}, headers=admin_headers)
+
     patch = await client.patch(
         f"/v1/markets/{market_id}",
         json={"state": "OPEN"},
