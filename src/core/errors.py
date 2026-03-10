@@ -33,3 +33,6 @@ class InsufficientFunds(Exception):
 
 class InvalidStateTransition(Exception):
     pass
+
+class OrderNotFound(Exception):
+    pass

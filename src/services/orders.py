@@ -1,9 +1,9 @@
 from src.schemas.order import OrderInput
 from src.crud.market import get_market_by_id
-from src.core.errors import MarketNotFound, MarketNotOpen, InsufficientFunds
+from src.core.errors import MarketNotFound, MarketNotOpen, InsufficientFunds, OrderNotFound
 from src.db.models import MarketState, OrderSide, Order, TransactionType, OrderStatus
 from src.crud.wallet import get_balance, get_wallet_by_user, create_transaction
-from src.crud.order import get_resting_orders, upsert_position, create_trade, create_order
+from src.crud.order import get_resting_orders, upsert_position, create_trade, create_order, get_order_by_id
 from decimal import Decimal
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -68,3 +68,9 @@ def _update_status(order: Order):
         order.status = OrderStatus.FILLED
     elif order.remaining < order.amount:
         order.status = OrderStatus.PARTIAL
+
+async def get_order_service(order_id: UUID, db: AsyncSession):
+    order = await get_order_by_id(order_id=order_id, db=db)
+    if not order:
+        raise OrderNotFound()
+    return order

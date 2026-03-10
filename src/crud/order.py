@@ -73,3 +73,10 @@ async def upsert_position(user_id: UUID, market_id: UUID, outcome_id: UUID, amou
         )
         db.add(position)
     await db.flush()
+
+async def get_order_by_id(order_id: UUID, db: AsyncSession):
+    result = await db.execute(
+        select(Order).where(Order.id == order_id)
+    )
+    order = result.scalar_one_or_none()
+    return order

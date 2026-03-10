@@ -3,8 +3,9 @@ from src.schemas.order import OrderInput, OrderResponse
 from src.core.dependencies import get_current_user
 from src.db.deps import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.services.orders import create_order_service
-from src.core.errors import MarketNotFound, MarketNotOpen
+from src.services.orders import create_order_service, get_order_service
+from src.core.errors import MarketNotFound, MarketNotOpen, OrderNotFound
+from uuid import UUID
 
 router = APIRouter(prefix="/orders", tags=["v1:Orders"])
 
@@ -29,4 +30,15 @@ async def create_order_endpoint(payload: OrderInput, user = Depends(get_current_
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
+        )
+
+@router.get("/{order_id}", response_model=OrderResponse)
+async def get_order_endpoint(order_id: UUID, user = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    try:
+        order = await get_order_service(order_id=order_id, db=db)
+        return order
+    except OrderNotFound:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="order not found"
         )
