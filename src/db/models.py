@@ -95,6 +95,7 @@ class Market(Base):
     
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     creator_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=False)
+    winning_outcome_id = Column(UUID(as_uuid=True), ForeignKey("market_outcomes.id", use_alter=True, name="fk_market_winning_outcome"), nullable=True)
 
     title = Column(String(255), nullable=False)
     description = Column(Text, nullable=False)
