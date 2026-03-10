@@ -14,7 +14,7 @@ Phases 1–4 are implemented: user authentication, wallet management, and market
 - [x] Phase 2 - Authentication (register, login, JWT access + refresh tokens, bcrypt)
 - [x] Phase 3 - Wallets (ledger-based balance, faucet, rate limiting)
 - [x] Phase 4 - Markets (create, list, get, patch, state machine, outcomes)
-- [ ] Phase 5 - Orders & matching engine (limit orders, price-time priority, partial fills)
+- [x] Phase 5 - Orders & matching engine (limit orders, price-time priority, partial fills)
 - [ ] Phase 6 - Resolution & settlement (admin resolves, winning outcome pays out)
 - [ ] Phase 7 - Frontend (login, market list, order placement, wallet balance, order book)
 
@@ -43,7 +43,15 @@ Phases 1–4 are implemented: user authentication, wallet management, and market
 - Market listing and detail endpoints
 - Market descriptions in Markdown (stored as plain text)
 
-### 4. Infrastructure
+### 4. Orders & trading
+- Only limit orders
+- Price-time priority matching engine
+- Partial fills
+- Position tracker per user per outcome
+- Single database transaction per match, all or nothing
+- Orders locked to OPEN markets
+
+### 5. Infrastructure
 - FastAPI backend
 - PostgreSQL database
 - Alembic migrations for schema versioning

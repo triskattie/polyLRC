@@ -87,10 +87,10 @@ Endpoints
 ### Backend
 Testing
 - Pytest for testing
-- SQLite database in-memory
+- SQLite database in-memory for test isolation
 - Mocked Redis
-- Fixtures
-- Marks
+- Fixtures - db_engine, db_session, client, mock_redis, registered_user, user_tokens, auth_headers, admin_user, admin_headers, open_market
+- Marks - integration, slow
 
 Models
 - > orders
@@ -110,7 +110,7 @@ Matching engine
 Flow
 1. Valid market is OPEN
 2. Validate outcome belongs to market
-3. Check buyers balance 
+3. Check buyer balance covers cost (BUY only)
 4. Insert incoming order
 5. Fetch best opposing order (price-time priority)
 6. For each maker: fill, write trade, update wallet, update position
@@ -121,3 +121,30 @@ Endpoints
 - POST /orders
 - GET /markets/{id}/orderbook
 - GET /orders/{id}
+
+## Phase 6 - Market resolution
+### Backend
+Models 
+- > winning_outcome_id added to markets (nullable ForeignKey)
+
+Features
+- Admin resolves market
+- Payout calculation
+- Wallet settlement
+
+Rules
+- Only admin can resolve
+- Each winning position pays 1*amount
+- All positions cleared after settlement
+
+Flow
+1. Validate admin
+2. Validate market is OPEN or CLOSED
+3. Validate outcome belongs to market
+4. Transition market to RESOLVED and set winning_outcome_id
+5. Query all winning positions
+6. Give every winner's wallet by position amount
+7. Delete all positions for market
+
+Endpoints
+- POST /markets/{id}/resolve
