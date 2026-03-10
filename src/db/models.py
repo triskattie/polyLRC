@@ -9,6 +9,7 @@ class TransactionType(PyEnum):
     FAUCET = "FAUCET"
     TRADE = "TRADE"
     ADMIN_ADJUST = "ADMIN_ADJUST"
+    PAYOUT = "PAYOUT"
 
 class MarketState(PyEnum):
     PRE = "PRE"

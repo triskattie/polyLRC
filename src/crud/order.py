@@ -3,7 +3,7 @@ from src.schemas.order import OrderInput
 from uuid import UUID
 from src.db.models import Order, OrderSide, OrderStatus, Trade, Position
 from decimal import Decimal
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 async def create_order(payload: OrderInput, user_id: UUID, db: AsyncSession):
     order = Order(
@@ -80,3 +80,15 @@ async def get_order_by_id(order_id: UUID, db: AsyncSession):
     )
     order = result.scalar_one_or_none()
     return order
+
+async def get_winning_positions(winning_outcome_id: UUID, db: AsyncSession):
+    result = await db.execute(
+        select(Position).where(Position.outcome_id == winning_outcome_id, Position.amount > 0)
+    )
+    return list(result.scalars().all())
+
+async def delete_positions_for_market(market_id: UUID, db: AsyncSession):
+    await db.execute(
+        delete(Position).where(Position.market_id == market_id)
+    )
+    await db.flush()

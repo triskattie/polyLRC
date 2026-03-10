@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.core.dependencies import get_current_user
 from src.db.deps import get_db
-from src.schemas.market import MarketCreation, MarketCreationResponse, MarketId, MarketResponse, MarketsPageResponse, MarketUpdate, OrderBookResponse
-from src.services.markets import market_creation_service, market_by_id_service, markets_service, patch_market_service, get_orderbook_service
+from src.schemas.market import MarketCreation, MarketCreationResponse, MarketId, MarketResponse, MarketsPageResponse, MarketUpdate, OrderBookResponse, ResolveMarketInput
+from src.services.markets import market_creation_service, market_by_id_service, markets_service, patch_market_service, get_orderbook_service, resolve_market_service
 from src.core.errors import MissingPermission, MarketNotFound, MarketOpen, InvalidStateTransition, OutcomeNotInMarket
 from uuid import UUID
 from src.db.models import MarketState
@@ -84,6 +84,33 @@ async def get_orderbook(market_id: UUID, outcome_id: UUID, user = Depends(get_cu
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="market was not found"
+        )
+    except OutcomeNotInMarket:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="outcome not in market"
+        )
+
+@router.post("/{market_id}/resolve", response_model=MarketResponse)
+async def resolve_market_endpoint(market_id: UUID, payload: ResolveMarketInput, user = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    try:
+        market = await resolve_market_service(market_id=market_id, winning_outcome_id=payload.winning_outcome_id, user_id=user.user_id, db=db)
+        await db.commit()
+        return market
+    except MissingPermission:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="not authorized to resolve markets"
+        )
+    except MarketNotFound:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="market was not found"
+        )
+    except InvalidStateTransition:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="invalid state transition"
         )
     except OutcomeNotInMarket:
         raise HTTPException(

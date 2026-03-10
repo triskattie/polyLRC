@@ -5,7 +5,9 @@ from src.crud.user import get_user_by_uuid
 from src.crud.market import create_market, create_outcome, get_market_by_id, get_markets, patch_market, get_market_orderbook
 from src.core.errors import MissingPermission, MarketNotFound, MarketOpen, OutcomeNotInMarket
 from datetime import datetime, timezone
-from src.db.models import MarketState
+from src.db.models import MarketState, TransactionType
+from src.crud.order import get_winning_positions, delete_positions_for_market
+from src.crud.wallet import get_wallet_by_user, create_transaction
 
 async def market_creation_service(payload: MarketCreation, creator_id: UUID, db: AsyncSession):
     creator = await get_user_by_uuid(db=db, user_id=creator_id)
@@ -130,4 +132,43 @@ async def get_orderbook_service(market_id: UUID, outcome_id: UUID, db: AsyncSess
         outcome_id=outcome_id,
         bids=[OrderBookEntry(price=row.price, remaining=row.remaining) for row in bids],
         asks=[OrderBookEntry(price=row.price, remaining=row.remaining) for row in asks],
+    )
+
+async def resolve_market_service(market_id: UUID, winning_outcome_id: UUID, user_id: UUID, db: AsyncSession):
+    user = await get_user_by_uuid(db=db, user_id=user_id)
+    if user.role != "admin":
+        raise MissingPermission()
+    market = await get_market_by_id(market_id=market_id, db=db)
+    if not market:
+        raise MarketNotFound()
+    if market.state not in [MarketState.OPEN, MarketState.CLOSED]:
+        raise InvalidStateTransition()
+    if winning_outcome_id not in [o.id for o in market.outcomes]:
+        raise OutcomeNotInMarket()
+    market.state = MarketState.RESOLVED
+    market.winning_outcome_id = winning_outcome_id
+    winning_positions = await get_winning_positions(winning_outcome_id=winning_outcome_id, db=db)
+    for p in winning_positions:
+        wallet = await get_wallet_by_user(user_id=p.user_id, db=db)
+        await create_transaction(db=db, wallet_id=wallet.id, amount=p.amount, type=TransactionType.PAYOUT, related_market_id=market_id)
+    await delete_positions_for_market(market_id=market_id, db=db)
+    await db.refresh(market)
+
+    outcomes_responses = [MarketOutcomeResponse(
+        id=o.id,
+        name=o.name,
+        description=o.description
+    ) for o in market.outcomes]
+
+    return MarketResponse(
+        id=market.id,
+        winning_outcome_id=market.winning_outcome_id,
+        title=market.title,
+        description=market.description,
+        state=market.state,
+        open_timestamp=market.open_timestamp,
+        closed_timestamp=market.closed_timestamp,
+        created_at=market.created_at,
+        updated_at=market.updated_at,
+        outcomes=outcomes_responses
     )

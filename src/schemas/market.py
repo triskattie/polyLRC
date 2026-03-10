@@ -29,6 +29,7 @@ class MarketOutcomeResponse(BaseModel):
 
 class MarketResponse(BaseModel):
     id: UUID
+    winning_outcome_id: UUID | None = None
     title: str
     description: str
     state: MarketState
@@ -67,3 +68,6 @@ class OrderBookResponse(BaseModel):
     outcome_id: UUID
     bids: list[OrderBookEntry]
     asks: list[OrderBookEntry]
+
+class ResolveMarketInput(BaseModel):
+    winning_outcome_id: UUID
