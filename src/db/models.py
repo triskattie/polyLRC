@@ -124,12 +124,19 @@ class MarketOutcome(Base):
 Market.outcomes = relationship(
     "MarketOutcome",
     back_populates="market",
-    cascade="all, delete-orphan"
+    cascade="all, delete-orphan",
+    foreign_keys="[MarketOutcome.market_id]"
+)
+
+Market.winning_outcome = relationship(
+    "MarketOutcome",
+    foreign_keys=[Market.winning_outcome_id]
 )
 
 MarketOutcome.market = relationship(
     "Market",
-    back_populates="outcomes"
+    back_populates="outcomes",
+    foreign_keys="[MarketOutcome.market_id]"
 )
 
 class Order(Base):
