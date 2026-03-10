@@ -35,7 +35,7 @@ async def create_order_endpoint(payload: OrderInput, user = Depends(get_current_
 @router.get("/{order_id}", response_model=OrderResponse)
 async def get_order_endpoint(order_id: UUID, user = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     try:
-        order = await get_order_service(order_id=order_id, db=db)
+        order = await get_order_service(order_id=order_id, user_id=user.user_id, db=db)
         return order
     except OrderNotFound:
         raise HTTPException(

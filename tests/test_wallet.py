@@ -1,6 +1,6 @@
 import pytest
 from sqlalchemy import text
-
+import os
 
 async def test_get_wallet_returns_balance(client, auth_headers):
     response = await client.get(
@@ -50,4 +50,5 @@ async def test_balance_is_sum_of_transactions(client, auth_headers, db_session):
     second = await client.post("/v1/wallet/faucet", headers=auth_headers)
     balance_after_two = float(second.json()["balance"])
 
-    assert balance_after_two + 10 == pytest.approx(balance_after_one * 2, rel=1e-6)
+    faucet_amount = int(os.getenv("FAUCET_AMOUNT"))
+    assert balance_after_two == faucet_amount * 3
