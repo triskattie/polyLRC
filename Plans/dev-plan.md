@@ -28,6 +28,7 @@ Features
 - JWT issuance
 - Password hashing
 - Role system
+- Token storge in redis
 
 Endpoints
 - POST /auth/register
@@ -50,6 +51,7 @@ Features
 - Faucet on registration
 - Get wallet balance
 - Credit + debit helper functions
+- Rate limited faucet
 
 Rules
 - No balance column
@@ -73,7 +75,7 @@ Features
 
 Rules
 - Only OPEN markets accept orders
-- No editing after OPEN
+- No editing except during PRE
 
 Endpoints
 - GET /markets
@@ -84,11 +86,16 @@ Endpoints
 ## Phase 5 - Orders, trading engine and testing
 ### Backend
 Testing
-- Add pytest for all critical flows
+- Pytest for testing
+- SQLite database in-memory
+- Mocked Redis
+- Fixtures
+- Marks
 
 Models
 - > orders
 - > trades
+- > positions
 
 Order types
 - Only limit orders
@@ -97,16 +104,20 @@ Order types
 
 Matching engine
 - Price-time priority
+- Partial fills
 - Single process
 
 Flow
-1. Lock market
-2. Fetch best opposing order
-3. Match amounts
-4. Write trades
-5. Update wallets
-6. Update order statuses
+1. Valid market is OPEN
+2. Validate outcome belongs to market
+3. Check buyers balance 
+4. Insert incoming order
+5. Fetch best opposing order (price-time priority)
+6. For each maker: fill, write trade, update wallet, update position
+7. Update order statuses
+8. Commit transaction
 
 Endpoints
 - POST /orders
 - GET /markets/{id}/orderbook
+- GET /orders/{id}

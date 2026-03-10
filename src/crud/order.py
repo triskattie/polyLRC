@@ -72,3 +72,4 @@ async def upsert_position(user_id: UUID, market_id: UUID, outcome_id: UUID, amou
             amount=amount
         )
         db.add(position)
+    await db.flush()
