@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from uuid import UUID
 from datetime import datetime
-from src.db.models import Market, MarketOutcome
+from src.db.models import Market, MarketOutcome, Order, OrderSide, OrderStatus
 from sqlalchemy import select, func
 from sqlalchemy.orm import selectinload
 from src.schemas.market import MarketUpdate
@@ -111,3 +111,30 @@ async def patch_market(market_id, payload: MarketUpdate, db: AsyncSession):
         raise ValueError("market must have at least two outcomes")
     await db.refresh(market)
     return market
+
+async def get_market_orderbook(market_id: UUID, outcome_id: UUID, db: AsyncSession):
+    bids = await db.execute(
+        select(Order.price, func.sum(Order.remaining).label("remaining"))
+        .where(
+            Order.market_id == market_id,
+            Order.outcome_id == outcome_id,
+            Order.side == OrderSide.BUY,
+            Order.status.in_([OrderStatus.OPEN, OrderStatus.PARTIAL]),
+        )
+        .group_by(Order.price)
+        .order_by(Order.price.desc())
+    )
+
+    asks = await db.execute(
+        select(Order.price, func.sum(Order.remaining).label("remaining"))
+        .where(
+            Order.market_id == market_id,
+            Order.outcome_id == outcome_id,
+            Order.side == OrderSide.SELL,
+            Order.status.in_([OrderStatus.OPEN, OrderStatus.PARTIAL]),
+        )
+        .group_by(Order.price)
+        .order_by(Order.price.asc())
+    )
+
+    return bids.all(), asks.all()

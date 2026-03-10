@@ -2,6 +2,7 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 from uuid import UUID
 from src.db.models import MarketState
+from decimal import Decimal
 
 class MarketOutcomeCreate(BaseModel):
     name: str = Field(min_length=1, max_length=255)
@@ -56,3 +57,13 @@ class MarketUpdate(BaseModel):
     open_timestamp: datetime | None = None
     closed_timestamp: datetime | None = None
     outcomes: list[MarketOutcomeUpdate] | None = None
+
+class OrderBookEntry(BaseModel):
+    price: Decimal
+    remaining: Decimal
+
+class OrderBookResponse(BaseModel):
+    market_id: UUID
+    outcome_id: UUID
+    bids: list[OrderBookEntry]
+    asks: list[OrderBookEntry]

@@ -1,9 +1,9 @@
-from src.schemas.market import MarketCreation, MarketCreationResponse, MarketResponse, MarketOutcomeResponse, MarketUpdate
+from src.schemas.market import MarketCreation, MarketCreationResponse, MarketResponse, MarketOutcomeResponse, MarketUpdate, OrderBookResponse, OrderBookEntry
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.crud.user import get_user_by_uuid
-from src.crud.market import create_market, create_outcome, get_market_by_id, get_markets, patch_market
-from src.core.errors import MissingPermission, MarketNotFound, MarketOpen
+from src.crud.market import create_market, create_outcome, get_market_by_id, get_markets, patch_market, get_market_orderbook
+from src.core.errors import MissingPermission, MarketNotFound, MarketOpen, OutcomeNotInMarket
 from datetime import datetime, timezone
 from src.db.models import MarketState
 
@@ -114,4 +114,20 @@ async def patch_market_service(market_id: UUID, payload: MarketUpdate, user_id: 
         created_at=new_market.created_at,
         updated_at=new_market.updated_at,
         outcomes=outcomes_responses
+    )
+
+async def get_orderbook_service(market_id: UUID, outcome_id: UUID, db: AsyncSession):
+    market = await get_market_by_id(market_id=market_id, db=db)
+    if not market:
+        raise MarketNotFound()
+    
+    if outcome_id not in [o.id for o in market.outcomes]:
+        raise OutcomeNotInMarket()
+
+    bids, asks = await get_market_orderbook(market_id=market_id, outcome_id=outcome_id, db=db)
+    return OrderBookResponse(
+        market_id=market_id,
+        outcome_id=outcome_id,
+        bids=[OrderBookEntry(price=row.price, remaining=row.remaining) for row in bids],
+        asks=[OrderBookEntry(price=row.price, remaining=row.remaining) for row in asks],
     )
