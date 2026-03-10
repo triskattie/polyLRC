@@ -1,13 +1,15 @@
-from src.schemas.market import MarketCreation, MarketCreationResponse, MarketResponse, MarketOutcomeResponse, MarketUpdate, OrderBookResponse, OrderBookEntry
+from src.schemas.market import MarketCreation, MarketCreationResponse, MarketResponse, MarketOutcomeResponse, MarketUpdate, OrderBookResponse, OrderBookEntry, MarketSeedResponse
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.crud.user import get_user_by_uuid
 from src.crud.market import create_market, create_outcome, get_market_by_id, get_markets, patch_market, get_market_orderbook
-from src.core.errors import MissingPermission, MarketNotFound, MarketOpen, OutcomeNotInMarket
+from src.core.errors import MissingPermission, MarketNotFound, MarketOpen, OutcomeNotInMarket, InvalidStateTransition, MarketNotPre, MarketHasNoLiquidity
 from datetime import datetime, timezone
-from src.db.models import MarketState, TransactionType
-from src.crud.order import get_winning_positions, delete_positions_for_market
+from src.db.models import MarketState, TransactionType, OrderSide
+from src.crud.order import get_winning_positions, delete_positions_for_market, get_resting_orders_for_outcome, create_order
 from src.crud.wallet import get_wallet_by_user, create_transaction
+from decimal import Decimal
+from src.schemas.order import OrderInput
 
 async def market_creation_service(payload: MarketCreation, creator_id: UUID, db: AsyncSession):
     creator = await get_user_by_uuid(db=db, user_id=creator_id)
@@ -17,8 +19,8 @@ async def market_creation_service(payload: MarketCreation, creator_id: UUID, db:
     if not payload.title.strip():
         raise ValueError("title can't be empty")
 
-    if len(payload.outcomes) < 2:
-        raise ValueError("market must have at least two outcomes")
+    if len(payload.outcomes) != 2:
+        raise ValueError("market must have two outcomes")
 
     names = [outcome.name.lower() for outcome in payload.outcomes]
     if len(names) != len(set(names)):
@@ -94,6 +96,16 @@ async def patch_market_service(market_id: UUID, payload: MarketUpdate, user_id: 
         }
         if valid_transitions.get(market.state) != payload.state:
             raise InvalidStateTransition()
+
+        if payload.state == MarketState.OPEN:
+            for outcome in market.outcomes:
+                orders = await get_resting_orders_for_outcome(
+                    market_id=market.id,
+                    outcome_id=outcome.id,
+                    db=db
+                )
+                if not orders:
+                    raise MarketHasNoLiquidity()
         market.state = payload.state
     else:
         if market.state != MarketState.PRE:
@@ -171,4 +183,33 @@ async def resolve_market_service(market_id: UUID, winning_outcome_id: UUID, user
         created_at=market.created_at,
         updated_at=market.updated_at,
         outcomes=outcomes_responses
+    )
+
+async def seed_market_service(market_id: UUID, user_id: UUID, amount: Decimal, db: AsyncSession):
+    user = await get_user_by_uuid(db=db, user_id=user_id)
+    if user.role != "admin":
+        raise MissingPermission()
+    market = await get_market_by_id(market_id=market_id, db=db)
+    if not market:
+        raise MarketNotFound()
+    if market.state != MarketState.PRE:
+        raise MarketNotPre()
+
+    for outcome in market.outcomes:
+        await create_order(
+            payload=OrderInput(
+                market_id=market_id,
+                outcome_id=outcome.id,
+                side=OrderSide.SELL,
+                amount=amount,
+                price=Decimal("0.5")
+            ),
+            user_id=user_id,
+            db=db
+        )
+
+    return MarketSeedResponse(
+        market_id=market_id,
+        orders_created=len(market.outcomes),
+        amount_per_outcome=amount
     )

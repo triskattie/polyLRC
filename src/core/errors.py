@@ -42,3 +42,9 @@ class OrderAccessDenied(Exception):
 
 class OutcomeNotInMarket(Exception):
     pass
+
+class MarketNotPre(Exception):
+    pass
+
+class MarketHasNoLiquidity(Exception):
+    pass

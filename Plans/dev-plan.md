@@ -128,6 +128,7 @@ Models
 - > winning_outcome_id added to markets (nullable ForeignKey)
 
 Features
+- Admin seeds initial liquidity per market
 - Admin resolves market
 - Payout calculation
 - Wallet settlement

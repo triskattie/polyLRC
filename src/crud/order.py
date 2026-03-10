@@ -92,3 +92,14 @@ async def delete_positions_for_market(market_id: UUID, db: AsyncSession):
         delete(Position).where(Position.market_id == market_id)
     )
     await db.flush()
+
+async def get_resting_orders_for_outcome(market_id: UUID, outcome_id: UUID, db: AsyncSession):
+    result = await db.execute(
+        select(Order).where(
+            Order.market_id == market_id,
+            Order.outcome_id == outcome_id,
+            Order.side == OrderSide.SELL,
+            Order.status.in_([OrderStatus.OPEN, OrderStatus.PARTIAL])
+        )
+    )
+    return list(result.scalars().all())

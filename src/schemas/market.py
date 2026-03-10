@@ -71,3 +71,11 @@ class OrderBookResponse(BaseModel):
 
 class ResolveMarketInput(BaseModel):
     winning_outcome_id: UUID
+
+class MarketSeedInput(BaseModel):
+    amount: Decimal
+
+class MarketSeedResponse(BaseModel):
+    market_id: UUID
+    orders_created: int
+    amount_per_outcome: Decimal
