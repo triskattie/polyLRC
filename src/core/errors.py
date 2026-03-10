@@ -36,3 +36,6 @@ class InvalidStateTransition(Exception):
 
 class OrderNotFound(Exception):
     pass
+
+class OrderAccessDenied(Exception):
+    pass
