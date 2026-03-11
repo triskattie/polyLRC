@@ -4,7 +4,7 @@ from src.core.dependencies import get_current_user
 from src.db.deps import get_db
 from src.schemas.market import MarketCreation, MarketCreationResponse, MarketId, MarketResponse, MarketsPageResponse, MarketUpdate, OrderBookResponse, ResolveMarketInput, MarketSeedInput
 from src.services.markets import market_creation_service, market_by_id_service, markets_service, patch_market_service, get_orderbook_service, resolve_market_service, seed_market_service
-from src.core.errors import MissingPermission, MarketNotFound, MarketOpen, InvalidStateTransition, OutcomeNotInMarket, MarketNotPre
+from src.core.errors import MissingPermission, MarketNotFound, MarketOpen, InvalidStateTransition, OutcomeNotInMarket, MarketNotPre, MarketHasNoLiquidity
 from uuid import UUID
 from src.db.models import MarketState
 
@@ -68,6 +68,11 @@ async def patch_market_endpoint(market_id: UUID, payload: MarketUpdate, user = D
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="can't modify markets after opening"
+        )
+    except MarketHasNoLiquidity:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="market is missing liquidity"
         )
     except ValueError as e:
         raise HTTPException(

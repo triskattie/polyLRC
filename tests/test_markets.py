@@ -453,3 +453,105 @@ async def test_resolution_correct_wallet_increase(client, auth_headers, admin_he
     )
     after_balance = float(after_wallet.json()["balance"])
     assert after_balance == before_balance + 24
+
+async def test_resolution_no_winning_position_no_payout(client, auth_headers, admin_headers, open_market):
+    market_id, outcome_ids = open_market
+    before_wallet = await client.get(
+        "/v1/wallet",
+        headers=auth_headers
+    )
+    before_balance = float(before_wallet.json()["balance"])
+    
+    await client.post(
+        "/v1/orders",
+        json={"market_id": market_id, "outcome_id": outcome_ids[0], "side": "SELL", "amount": 40, "price": 0.4},
+        headers=admin_headers
+    )
+    await client.post(
+        "/v1/orders",
+        json={"market_id": market_id, "outcome_id": outcome_ids[0], "side": "BUY", "amount": 40, "price": 0.4},
+        headers=auth_headers
+    )
+    await client.post(
+        f"/v1/markets/{market_id}/resolve",
+        json={"winning_outcome_id": outcome_ids[1]},
+        headers=admin_headers
+    )
+    after_wallet = await client.get(
+        "/v1/wallet",
+        headers=auth_headers
+    )
+    after_balance = float(after_wallet.json()["balance"])
+    assert after_balance == before_balance - 16
+
+async def test_resolution_positions_cleared(client, auth_headers, admin_headers, open_market, db_session):
+    from sqlalchemy import text
+    market_id, outcome_ids = open_market
+    await client.post(
+        "/v1/orders",
+        json={"market_id": market_id, "outcome_id": outcome_ids[0], "side": "SELL", "amount": 40, "price": 0.4},
+        headers=admin_headers
+    )
+    await client.post(
+        "/v1/orders",
+        json={"market_id": market_id, "outcome_id": outcome_ids[0], "side": "BUY", "amount": 40, "price": 0.4},
+        headers=auth_headers
+    )
+    await client.post(
+        f"/v1/markets/{market_id}/resolve",
+        json={"winning_outcome_id": outcome_ids[1]},
+        headers=admin_headers
+    )
+    result = await db_session.execute(text("SELECT * FROM positions WHERE outcome_id == :o"), {"o": outcome_ids[0]})
+    assert result.all() == []
+    
+async def test_resolution_trading_lock(client, admin_headers, open_market):
+    market_id, outcome_ids = open_market
+    await client.post(
+        f"/v1/markets/{market_id}/resolve",
+        json={"winning_outcome_id": outcome_ids[1]},
+        headers=admin_headers
+    )
+    response = await client.post(
+        "/v1/orders",
+        json={"market_id": market_id, "outcome_id": outcome_ids[0], "side": "SELL", "amount": 40, "price": 0.4},
+        headers=admin_headers
+    )
+    assert response.status_code == 409
+
+async def test_seed_unauthenticated_returns_401(client, admin_headers):
+    market = await client.post("/v1/markets", json=VALID_MARKET, headers=admin_headers)
+    market_id = market.json()["market_id"]
+
+    response = await client.post(f"/v1/markets/{market_id}/seed", json={"amount": 1000})
+    assert response.status_code == 401
+
+async def test_seed_as_user_returns_401(client, admin_headers, auth_headers):
+    market = await client.post("/v1/markets", json=VALID_MARKET, headers=admin_headers)
+    market_id = market.json()["market_id"]
+
+    response = await client.post(f"/v1/markets/{market_id}/seed", json={"amount": 1000}, headers=auth_headers)
+    assert response.status_code == 401
+
+async def test_seed_market_not_found_returns_404(client, admin_headers):
+    market_id = "00000000-0000-0000-0000-000000000000"
+    response = await client.post(f"/v1/markets/{market_id}/seed", json={"amount": 1000}, headers=admin_headers)
+
+async def test_seed_market_not_pre_returns_409(client, admin_headers, open_market):
+    market_id, outcome_ids = open_market
+    response = await client.post(f"/v1/markets/{market_id}/seed", json={"amount": 1000}, headers=admin_headers)
+
+async def test_seed_success(client, admin_headers):
+    market = await client.post("/v1/markets", json=VALID_MARKET, headers=admin_headers)
+    market_id = market.json()["market_id"]
+
+    response = await client.post(f"/v1/markets/{market_id}/seed", json={"amount": 1000}, headers=admin_headers)
+    assert response.status_code == 200
+    assert "market_id" in response.json()
+
+async def test_market_transition_not_allowed_without_liquidity(client, admin_headers):
+    market = await client.post("/v1/markets", json=VALID_MARKET, headers=admin_headers)
+    market_id = market.json()["market_id"]
+
+    response = await client.patch(f"/v1/markets/{market_id}", json={"state": "OPEN"}, headers=admin_headers)
+    assert response.status_code == 409
