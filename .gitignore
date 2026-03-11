@@ -1,3 +1,6 @@
 __pycache__/
 .env
 venv/
+frontend/.next/
+frontend/node_modules/
+frontend/.env.local
