@@ -149,3 +149,20 @@ Flow
 
 Endpoints
 - POST /markets/{id}/resolve
+- POST /markets/{id}/seed
+
+## Phase 7 - Frontend core
+### Frontend
+Pages
+- Landing
+- Register/login
+- Market list
+- Market detail
+- Wallet page
+
+Features
+- Auth flow
+- Place orders
+- View orderbook
+- View trades
+- Charts
