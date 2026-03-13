@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { start } from "repl"
 
 export default function LandingPage() {
   return (
@@ -13,7 +12,7 @@ export default function LandingPage() {
       `}</style>
 
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255, 255, 255, 0.1" }}>
-        <Link href="">PolyLRC</Link>
+        <Link href="/">PolyLRC</Link>
         <a href="https://triskattie.com">← triskattie.com</a>
         <Link href="/markets" className="button button-full">Launch App</Link>
       </nav>
@@ -50,14 +49,14 @@ export default function LandingPage() {
         <h1 style={{ fontSize: 20, marginBottom: 20}}>
           How it works
         </h1>
-        <ol>
+        <ul>
           <li>1. Create an account and claim tokens through the faucet.</li>
           <li>2. Find open markets on upcoming school events.</li>
           <li>3. Submit limit orders at your chosen price. Collateral locked immediately.</li>
           <li>4. Orders match by price-time priority. Partial fills supported.</li>
           <li>5. Admin resolves the market. Winners get paid out.</li>
           <li>6. Your wallet balance updates after settlement</li>
-        </ol>
+        </ul>
       </section>
 
       <hr style={{ maxWidth: 1000, margin: "0 auto", border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.2)"}}></hr>
