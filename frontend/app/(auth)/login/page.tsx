@@ -32,29 +32,29 @@ export default function LoginPage() {
   }
 
   return (
-    <main style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+    <main style={{ fontFamily: "'IBM Plex Mono', monospace", background: "#0d0f14", minHeight: "100vh" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        .button-full { background: #ffb300; color: #000000; }
+        .button-full { background: #d4af37; color: #000000; }
         .button { display: inline-block; padding: 11px 24px; font-family: 'IBM Plex Mono', monospace; font-size: 14px; }
         input { width: 100%; padding: 10px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: inherit; }
-        input:focus { outline: none; border-color: #ffb300; }
+        input:focus { outline: none; border-color: #d4af37; }
         label { display: flex; flex-direction: column; gap: 8px; font-size: 11px; }
       `}</style>
 
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-        <Link href="/">PolyLRC</Link>
-        <a href="https://triskattie.com">← triskattie.com</a>
+        <Link href="/" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
+        <a href="https://triskattie.com" style={{ color: "rgba(255, 255, 255, 0.3)", fontSize: 12, letterSpacing: "0.08em" }}>← triskattie.com</a>
       </nav>
 
       <section style={{ padding: "100px 48px", maxWidth: 480, margin: "0 auto" }}>
-        <p style={{ fontSize: 13, marginBottom: 25 }}>CS FINAL PROJECT - PREDICTION MARKET</p>
+        <p style={{ fontSize: 12, marginBottom: 25, color: "#d4af37" }}>CS FINAL PROJECT - PREDICTION MARKET</p>
         <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(32px, 5vw, 48px)", fontWeight: 400, lineHeight: 1.05, marginBottom: 25 }}>
-          Login to <br /><em style={{ color: "#ffc800" }}>your account.</em>
+          Login to <br /><em style={{ color: "#d4af37" }}>your account.</em>
         </h1>
         <p style={{ marginBottom: 40 }}>
-          Don't have an account yet? <Link href="/register" style={{ color: "#ffb300" }}>Register</Link>
+          Don't have an account yet? <Link href="/register" style={{ color: "#d4af37" }}>Register</Link>
         </p>
 
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
