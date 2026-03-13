@@ -7,15 +7,17 @@ export default function LandingPage() {
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        .button-full { background: #ffb300}
+        .button-full { background: #ffb300; color: #000000}
         .button-outline { border: 1px solid rgba(255,255,255, 0.3); }
         .button { display: inline-block; padding: 11px 24px; font-family: 'IBM Plex Mono', monospace; font-size: 14px}
       `}</style>
-      <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px" }}>
+
+      <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255, 255, 255, 0.1" }}>
         <Link href="">PolyLRC</Link>
-        <a href="← https://triskattie.com">triskattie.com</a>
-        <Link href="/markets">Launch App</Link>
+        <a href="https://triskattie.com">← triskattie.com</a>
+        <Link href="/markets" className="button button-full">Launch App</Link>
       </nav>
+
       <section style={{ padding: "100px 48px 80px", maxWidth: 1000, margin: "0 auto" }}>
         <p style={{ fontSize: "13px", marginBottom: "25px"}}>
           CS FINAL PROJECT - PREDICTION MARKET
@@ -24,11 +26,13 @@ export default function LandingPage() {
           Trade what you <br /> <em style={{ color: "#ffc800"}}>think will happen.</em>
           </h1>
         <p style={{ marginBottom: "25px", maxWidth: 590 }}>A minimal prediction market where you trade outcomes on school events using a real orderbook exchange. No real money.</p>
-        <div>
+        <div style={{ display: "flex", gap: 12 }}>
           <Link href="/markets" className="button button-full">Get started</Link>
           <Link href="/docs" className="button button-outline">How it works</Link>
         </div>
       </section>
+
+      <hr style={{ maxWidth: 1000, margin: "0 auto", border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.2)"}}></hr>
 
       <section style={{ margin: "0 auto", maxWidth: 1000, padding: "80px 48px" }}>
         <h1 style={{ fontSize: 20, marginBottom: "10px"}}>
@@ -39,7 +43,9 @@ export default function LandingPage() {
           The platform uses virtual tokens instead of real money.
         </p>
       </section>
-      
+
+      <hr style={{ maxWidth: 1000, margin: "0 auto", border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.2)"}}></hr>
+
       <section style={{ margin: "0 auto", maxWidth: 1000, padding: "80px 48px" }}>
         <h1 style={{ fontSize: 20, marginBottom: 20}}>
           How it works
@@ -54,6 +60,8 @@ export default function LandingPage() {
         </ol>
       </section>
 
+      <hr style={{ maxWidth: 1000, margin: "0 auto", border: "none", borderTop: "1px solid rgba(255, 255, 255, 0.2)"}}></hr>
+
       <section style={{ margin: "0 auto", maxWidth: 1000, padding: "80px 48px" }}>
         <h1 style={{ fontSize: 20, marginBottom: 20}}>
           Built with
@@ -61,7 +69,7 @@ export default function LandingPage() {
         <p>FastAPI, PostgreSQL, Redis, Next.js, SQLAlchemy, Podman</p>
       </section>
 
-      <footer style={{ padding: "24px 48px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+      <footer style={{ padding: "24px 48px", display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255, 255, 255, 0.1)" }}>
         <span>PolyLRC - CS final project</span>
         <div style={{ display: "flex", gap: 20 }}>
           <a href="https://triskattie.com">triskattie.com</a>
