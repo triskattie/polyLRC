@@ -26,7 +26,7 @@ export default function LandingPage() {
           </h1>
         <p style={{ marginBottom: "25px", maxWidth: 500, color: "rgba(255, 255, 255, 0.4)", lineHeight: 2, fontSize: 13 }}>A minimal prediction market where you trade outcomes on school events using a real orderbook exchange. No real money.</p>
         <div style={{ display: "flex", gap: 12 }}>
-          <Link href="/markets" className="button button-full">Get started</Link>
+          <Link href="/dashboard" className="button button-full">Get started</Link>
           <Link href="/docs" className="button button-outline">How it works</Link>
         </div>
       </section>
