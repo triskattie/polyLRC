@@ -125,9 +125,7 @@ export default function MarketPage({ params }: { params: Promise<{ id: string }>
 					</div>
 
 					{user?.role === "admin" && market.state === "PRE" && (
-						<button className="button button-full" onClick={() => {/* seed handler */}}>
-							Seed market
-						</button>
+						<Link href={`/admin/markets/${id}/seed`} className="button button-full">Seed market</Link>
 					)}
 				</div>
         <p style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", lineHeight: 1.8, maxWidth: 600, marginBottom: 24 }}>

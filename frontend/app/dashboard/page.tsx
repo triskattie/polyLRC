@@ -74,7 +74,7 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, marginBottom: 24 }}>
+        <div style={{ marginBottom: 24 }}>
           <div className="card">
             <div className="section-title">
               <span>Open markets</span>
@@ -88,35 +88,6 @@ export default function DashboardPage() {
               </div>
             ))}
           </div>
-
-          <div className="card">
-            <div className="section-title">
-              <span>Recent orders</span>
-            </div>
-            {!orders?.length && <p className="dim" style={{ fontSize: 12 }}>No orders yet.</p>}
-            {orders?.map((o: Order) => (
-              <div key={o.id} className="row">
-                <span>{o.side} @ {parseFloat(o.price).toFixed(2)}</span>
-                <span className="dim">{o.status}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="card">
-          <div className="section-title">
-            <span>Recent transactions</span>
-            <Link href="/wallet" className="dim" style={{ fontSize: 11 }}>View all →</Link>
-          </div>
-          {!transactions?.length && <p className="dim" style={{ fontSize: 12 }}>No transactions yet.</p>}
-          {transactions?.map((t: any) => (
-            <div key={t.transaction_id} className="row">
-              <span>{t.transaction_type}</span>
-              <span style={{ color: parseFloat(t.amount) >= 0 ? "#4ade80" : "#f87171" }}>
-                {parseFloat(t.amount) >= 0 ? "+" : ""}{parseFloat(t.amount).toFixed(2)} POLY
-              </span>
-            </div>
-          ))}
         </div>
       </section>
 
