@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Query
 from src.core.dependencies import get_current_user
 from src.db.deps import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.services.wallets import wallet_service, faucet_service
+from src.services.wallets import wallet_service, faucet_service, transaction_service
 from src.core.errors import WalletNotFound, FaucetCooldown
-from src.schemas.wallet import WalletResponse
+from src.schemas.wallet import WalletResponse, WalletTransactionsResponse
 from uuid import UUID
 
 router = APIRouter(prefix="/wallet", tags=["v1:Wallets"])
@@ -42,3 +42,8 @@ async def faucet_endpoint(user = Depends(get_current_user), db: AsyncSession = D
             status_code=status.HTTP_429_TOO_MANY_REQUESTS,
             detail="faucet already claimed"
         )
+
+@router.get("/transactions", response_model=WalletTransactionsResponse)
+async def transaction_endpoint(limit: int = Query(20, gt=0, le=100), offset: int = Query(0, ge=0), user = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    response = await transaction_service(user_id=user.user_id, limit=limit, offset=offset, db=db)
+    return response

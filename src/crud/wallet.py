@@ -27,3 +27,11 @@ async def create_transaction(db: AsyncSession, wallet_id: UUID, amount: Decimal,
     db.add(transaction)
     await db.flush()
     return transaction
+
+async def get_transactions_by_wallet(wallet_id: UUID, limit: int, offset: int, db: AsyncSession):
+    total_result = await db.execute(select(func.count()).where(WalletTransaction.wallet_id == wallet_id))
+    total = total_result.scalar()
+
+    result = await db.execute(select(WalletTransaction).where(WalletTransaction.wallet_id == wallet_id).limit(limit).offset(offset))
+    transactions = result.scalars().all()
+    return transactions, total

@@ -52,3 +52,45 @@ async def test_balance_is_sum_of_transactions(client, auth_headers, db_session):
 
     faucet_amount = int(os.getenv("FAUCET_AMOUNT"))
     assert balance_after_two == faucet_amount * 3
+
+async def test_transactions_are_empty_new_user(client, auth_headers):
+    response = await client.get("/v1/wallet/transactions", headers=auth_headers)
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body["transactions"]) == 1
+    assert float(body["total"]) == 1
+    assert body["transactions"][0]["transaction_type"] == "FAUCET"
+
+async def test_transactions_are_not_empty(client, auth_headers, open_market):
+    market_id, outcome_ids = open_market
+    await client.post(
+        "/v1/orders",
+        json={
+            "market_id": market_id,
+            "outcome_id": outcome_ids[0],
+            "side": "BUY",
+            "amount": 10,
+            "price": 0.4
+        },
+        headers=auth_headers
+    )
+    await client.post(
+        "/v1/orders",
+        json={
+            "market_id": market_id,
+            "outcome_id": outcome_ids[0],
+            "side": "SELL",
+            "amount": 10,
+            "price": 0.3
+        },
+        headers=auth_headers
+    )
+    response = await client.get("/v1/wallet/transactions", headers=auth_headers)
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body["transactions"]) == 3
+    assert float(body["total"]) == 3
+
+async def test_transactions_unauthorized_returns_401(client):
+    response = await client.get("/v1/wallet/transactions")
+    assert response.status_code == 401
