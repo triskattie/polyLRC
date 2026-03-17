@@ -129,8 +129,12 @@ export default function MarketPage({ params }: { params: Promise<{ id: string }>
             )}
 
             {user?.role === "admin" && (market.state === "PRE" || market.state === "OPEN") && (
-              <Link href={`/admin/markets/${id}/edit`} className="button button-full">Edit market</Link>
-            )}            
+              <Link href={`/admin/markets/${id}/edit`} className="button button-full" style={{ marginRight: 12}}>Edit market</Link>
+            )}
+
+            {user?.role === "admin" && (market.state === "OPEN" || market.state === "CLOSED") && (
+              <Link href={`/admin/markets/${id}/resolve`} className="button button-full">Resolve market</Link>
+            )}          
           </div>
 
 				</div>

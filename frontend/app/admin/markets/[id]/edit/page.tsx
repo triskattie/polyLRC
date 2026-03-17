@@ -43,7 +43,6 @@ export default function EditMarketPage({ params }: { params: Promise<{ id: strin
     setError(null)
     setLoading(true)
 
-    // Only send fields that changed
     const patch: Record<string, string> = {}
     if (form.title !== original.title) patch.title = form.title
     if (form.description !== original.description) patch.description = form.description
@@ -96,7 +95,7 @@ export default function EditMarketPage({ params }: { params: Promise<{ id: strin
         </div>
       </nav>
 
-      <section style={{ padding: "60px 48px", maxWidth: 1000, margin: "0 auto" }}>
+      <section style={{ padding: "60px 48px", maxWidth: 800, margin: "0 auto" }}>
         <p style={{ fontSize: 12, marginBottom: 16, color: "#d4af37", letterSpacing: "0.08em" }}>ADMIN — EDIT MARKET</p>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 48 }}>
           <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(32px, 4vw, 52px)", fontWeight: 400 }}>
@@ -143,7 +142,6 @@ export default function EditMarketPage({ params }: { params: Promise<{ id: strin
             </select>
           </label>
 
-          {/* Show which fields have changed */}
           {Object.keys({
             ...(form.title !== original.title ? { title: true } : {}),
             ...(form.description !== original.description ? { description: true } : {}),
@@ -181,6 +179,36 @@ export default function EditMarketPage({ params }: { params: Promise<{ id: strin
             </button>
           </div>
         </form>
+        
+        <div style={{ marginTop: 48, padding: "24px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.02)" }}>
+          <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", letterSpacing: "0.08em", marginBottom: 12, textTransform: "uppercase" }}>Market Info</p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, fontSize: 12 }}>
+            <div>
+              <p style={{ color: "rgba(255,255,255,0.3)", marginBottom: 4 }}>State</p>
+              <p style={{ color: "#d4af37", fontWeight: 500 }}>{market.state}</p>
+            </div>
+            <div>
+              <p style={{ color: "rgba(255,255,255,0.3)", marginBottom: 4 }}>Created</p>
+              <p style={{ color: "#e8e6e1", fontFamily: "monospace", fontSize: 11 }}>
+                {new Date(market.created_at).toLocaleString()}
+              </p>
+            </div>
+            <div>
+              <p style={{ color: "rgba(255,255,255,0.3)", marginBottom: 4 }}>Updated</p>
+              <p style={{ color: "#e8e6e1", fontFamily: "monospace", fontSize: 11 }}>
+                {new Date(market.updated_at).toLocaleString()}
+              </p>
+            </div>
+          </div>
+          {market.description && (
+            <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+              <p style={{ color: "rgba(255,255,255,0.3)", marginBottom: 8, fontSize: 11 }}>Description</p>
+              <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 12, lineHeight: 1.5 }}>
+                {market.description}
+              </p>
+            </div>
+          )}
+        </div>
       </section>
 
       <footer style={{ padding: "24px 48px", display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
