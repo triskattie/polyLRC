@@ -61,3 +61,17 @@ export type MarketsPage = {
   limit: number
   offset: number
 }
+
+export type WalletTransaction = {
+  transaction_id: string
+  amount: string
+  transaction_type: "FAUCET" | "TRADE" | "ADMIN_ADJUST" | "PAYOUT"
+  created_at: string
+}
+
+export type TransactionsPage = {
+  transactions: WalletTransaction[]
+  total: number
+  limit: number
+  offset: number
+}

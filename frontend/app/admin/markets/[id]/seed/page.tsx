@@ -18,9 +18,9 @@ export default function SeedMarketPage({ params }: { params: Promise<{ id: strin
 	const [loading, setLoading] = useState(false)
 
 	const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setLoading(true)
+		e.preventDefault()
+		setError(null)
+		setLoading(true)
 		try {
 			const res = await api.post(`/markets/${id}/seed`, {
 				amount: form.amount
@@ -42,16 +42,16 @@ export default function SeedMarketPage({ params }: { params: Promise<{ id: strin
 	})
 
 	useEffect(() => {
-	if (user && user.role !== "admin") {
-		router.push("/markets")
-	}
-}, [user])
+		if (user && user.role !== "admin") {
+			router.push("/markets")
+		}
+	}, [user])
 	if (isLoading) return <p style={{ padding: 40, fontFamily: "monospace" }}>Loading...</p>
 	if (isError) return <p style={{ padding: 40, fontFamily: "monospace" }}>Market not found.</p>
 
 
 	return (
-		<main style={{}}>
+		<main style={{ fontFamily: "'IBM Plex Mono', monospace", background: "#0d0f14", minHeight: "100vh"}}>
 			<style>{`
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -64,26 +64,25 @@ export default function SeedMarketPage({ params }: { params: Promise<{ id: strin
         textarea { resize: vertical; min-height: 80px; }			
 			`}</style>
 
-      <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-        <Link href="/" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
-        <a href="https://triskattie.com" style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, letterSpacing: "0.08em" }}>← triskattie.com</a>
-        <Link href="/markets" className="button button-full" style={{ fontSize: 11 }}>Markets</Link>
-      </nav>
+			<nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
+				<Link href="/dashboard" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
+				<Link href="/markets" className="button button-full" style={{ fontSize: 11 }}>Markets</Link>
+			</nav>
 
-			<section>
-				<p>
+			<section style={{ padding: "100px 48px 80px", maxWidth: 1000, margin: "0 auto" }}>
+				<p style={{ fontSize: 12, marginBottom: 25, color: "#d4af37", letterSpacing: "0.08em" }}>
 					ADMIN - SEED MARKET
 				</p>
-				<h1>
-					Seed <em>market.</em>
+				<h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(40px, 7vw, 80px)", fontWeight: 400, lineHeight: 1.05, marginBottom: 25 }}>
+					Seed <em style={{ color: "#d4af37" }}>market.</em>
 				</h1>
-				<p>
-					Market will be in OPEN state. Make sure everything is correct before seeding.
+				<p style={{ marginBottom: 48, maxWidth: 500, color: "rgba(255,255,255,0.4)", lineHeight: 2, fontSize: 13 }}>
+					Market will stay PRE until market state is explicitly edited.
 				</p>
 
-				<form onSubmit={handleSubmit}>
+				<form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 24, maxWidth: 600 }}>
 					<label>
-						Amount 
+						Amount
 						<input
 							type="number"
 							value={form.amount}
@@ -99,7 +98,7 @@ export default function SeedMarketPage({ params }: { params: Promise<{ id: strin
 					)}
 
 					<div>
-						<button 
+						<button
 							type="submit"
 							disabled={loading}
 							className="button button-full"

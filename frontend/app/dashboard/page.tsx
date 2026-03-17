@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useQuery } from "@tanstack/react-query"
 import { api } from "@/lib/api"
-import type { MarketsPage, Market, WalletResponse, Order, User } from "@/lib/types"
+import type { MarketsPage, Market, WalletResponse, Order, User, TransactionsPage } from "@/lib/types"
 
 export default function DashboardPage() {
   const { data: wallet } = useQuery<WalletResponse>({
@@ -16,14 +16,14 @@ export default function DashboardPage() {
     queryFn: async () => (await api.get("/markets", { params: { state: "OPEN", limit: 5 } })).data,
   })
 
-  const { data: orders } = useQuery<Order[]>({
-    queryKey: ["orders", "recent"],
-    queryFn: async () => (await api.get("/orders", { params: { limit: 5 } })).data,
-  })
+  // const { data: orders } = useQuery<Order[]>({
+  //   queryKey: ["orders", "recent"],
+  //   queryFn: async () => (await api.get("/orders", { params: { limit: 5 } })).data,
+  // })
 
-  const { data: transactions } = useQuery<any[]>({
+  const { data: transactions } = useQuery<TransactionsPage>({
     queryKey: ["transactions"],
-    queryFn: async () => (await api.get("/wallet/transactions", { params: { limit: 5 } })).data,
+    queryFn: async () => (await api.get("/wallet/transactions")).data,
   })
 
   const { data: user } = useQuery<User>({
@@ -72,6 +72,23 @@ export default function DashboardPage() {
             {wallet ? parseFloat(wallet.balance).toFixed(2) : "-"}
             <span style={{ fontSize: 16, color: "rgba(255,255,255,0.3)", marginLeft: 8 }}>POLY</span>
           </p>
+        </div>
+
+        <div style={{ marginBottom: 24 }}>
+          <div className="card">
+            <div className="section-title">
+              <span>Recent transactions</span>
+            </div>
+            {!transactions?.transactions.length && <p className="dim" style={{ fontSize: 12 }}>No transactions yet.</p>}
+            {transactions?.transactions.map((t) => (
+              <div key={t.transaction_id} className="row">
+                <span>{t.transaction_type}</span>
+                <span style={{ color: parseFloat(t.amount) >= 0 ? "#4ade80" : "#f87171" }}>
+                  {parseFloat(t.amount) >= 0 ? "+" : ""}{parseFloat(t.amount).toFixed(2)} POLY
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div style={{ marginBottom: 24 }}>

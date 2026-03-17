@@ -65,8 +65,7 @@ export default function CreateMarketPage() {
       `}</style>
  
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-        <Link href="/" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
-        <a href="https://triskattie.com" style={{ color: "rgba(255,255,255,0.3)", fontSize: 12, letterSpacing: "0.08em" }}>← triskattie.com</a>
+        <Link href="/dashboard" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
         <Link href="/markets" className="button button-full" style={{ fontSize: 11 }}>Markets</Link>
       </nav>
  

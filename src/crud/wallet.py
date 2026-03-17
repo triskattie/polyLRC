@@ -32,6 +32,6 @@ async def get_transactions_by_wallet(wallet_id: UUID, limit: int, offset: int, d
     total_result = await db.execute(select(func.count()).where(WalletTransaction.wallet_id == wallet_id))
     total = total_result.scalar()
 
-    result = await db.execute(select(WalletTransaction).where(WalletTransaction.wallet_id == wallet_id).limit(limit).offset(offset))
+    result = await db.execute(select(WalletTransaction).where(WalletTransaction.wallet_id == wallet_id).limit(limit).offset(offset).order_by(WalletTransaction.created_at.desc()))
     transactions = result.scalars().all()
     return transactions, total
