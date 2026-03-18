@@ -48,7 +48,7 @@ export default function SeedMarketPage({ params }: { params: Promise<{ id: strin
 	}, [user])
 	if (isLoading) return <p style={{ padding: 40, fontFamily: "monospace" }}>Loading...</p>
 	if (isError) return <p style={{ padding: 40, fontFamily: "monospace" }}>Market not found.</p>
-
+	if (!market) return null
 
 	return (
 		<main style={{ fontFamily: "'IBM Plex Mono', monospace", background: "#0d0f14", minHeight: "100vh"}}>
@@ -66,19 +66,22 @@ export default function SeedMarketPage({ params }: { params: Promise<{ id: strin
 
 			<nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
 				<Link href="/dashboard" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
-				<Link href="/markets" className="button button-full" style={{ fontSize: 11 }}>Markets</Link>
+				<div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+					<Link href={`/markets/${id}`} style={{ color: "rgba(255, 255, 255, 0.4", fontSize: 12 }}>← Market</Link>
+					<Link href="/markets" className="button button-full" style={{ fontSize: 11 }}>Markets</Link>
+				</div>
 			</nav>
 
-			<section style={{ padding: "100px 48px 80px", maxWidth: 1000, margin: "0 auto" }}>
-				<p style={{ fontSize: 12, marginBottom: 25, color: "#d4af37", letterSpacing: "0.08em" }}>
-					ADMIN - SEED MARKET
-				</p>
-				<h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(40px, 7vw, 80px)", fontWeight: 400, lineHeight: 1.05, marginBottom: 25 }}>
-					Seed <em style={{ color: "#d4af37" }}>market.</em>
-				</h1>
-				<p style={{ marginBottom: 48, maxWidth: 500, color: "rgba(255,255,255,0.4)", lineHeight: 2, fontSize: 13 }}>
-					Market will stay PRE until market state is explicitly edited.
-				</p>
+      <section style={{ padding: "60px 48px", maxWidth: 800, margin: "0 auto" }}>
+        <p style={{ fontSize: 12, marginBottom: 16, color: "#d4af37", letterSpacing: "0.08em" }}>ADMIN — SEED MARKET</p>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 48 }}>
+          <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(32px, 4vw, 52px)", fontWeight: 400 }}>
+            Seed <em style={{ color: "#d4af37" }}>market.</em>
+          </h1>
+          <Link href={`/markets/${id}`} className="button button-outline" style={{ fontSize: 11 }}>
+            View market
+          </Link>
+        </div>
 
 				<form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 24, maxWidth: 600 }}>
 					<label>
@@ -107,7 +110,45 @@ export default function SeedMarketPage({ params }: { params: Promise<{ id: strin
 						</button>
 					</div>
 				</form>
+
+        <div style={{ marginTop: 48, padding: "24px", border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.02)" }}>
+          <p style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", letterSpacing: "0.08em", marginBottom: 12, textTransform: "uppercase" }}>Market Info</p>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 24, fontSize: 12 }}>
+            <div>
+              <p style={{ color: "rgba(255,255,255,0.3)", marginBottom: 4 }}>State</p>
+              <p style={{ color: "#d4af37", fontWeight: 500 }}>{market.state}</p>
+            </div>
+            <div>
+              <p style={{ color: "rgba(255,255,255,0.3)", marginBottom: 4 }}>Created</p>
+              <p style={{ color: "#e8e6e1", fontFamily: "monospace", fontSize: 11 }}>
+                {new Date(market.created_at).toLocaleString()}
+              </p>
+            </div>
+            <div>
+              <p style={{ color: "rgba(255,255,255,0.3)", marginBottom: 4 }}>Updated</p>
+              <p style={{ color: "#e8e6e1", fontFamily: "monospace", fontSize: 11 }}>
+                {new Date(market.updated_at).toLocaleString()}
+              </p>
+            </div>
+          </div>
+          {market.description && (
+            <div style={{ marginTop: 16, paddingTop: 16, borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+              <p style={{ color: "rgba(255,255,255,0.3)", marginBottom: 8, fontSize: 11 }}>Description</p>
+              <p style={{ color: "rgba(255,255,255,0.6)", fontSize: 12, lineHeight: 1.5 }}>
+                {market.description}
+              </p>
+            </div>
+          )}
+        </div>				
 			</section>
+
+			<footer style={{ padding: "24px 48px", display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
+				<span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)" }}>PolyLRC - CS final project</span>
+				<div style={{ display: "flex", gap: 20, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
+					<a href="https://triskattie.com">triskattie.com</a>
+					<Link href="/markets">Markets</Link>
+				</div>
+			</footer>
 		</main>
 	)
 }

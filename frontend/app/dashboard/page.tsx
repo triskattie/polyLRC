@@ -52,8 +52,9 @@ export default function DashboardPage() {
         <Link href="/" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
           <Link href="/markets" style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, letterSpacing: "0.08em" }}>Markets</Link>
-          <Link href="/wallet" style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, letterSpacing: "0.08em" }}>Wallet</Link>
+          {/* <Link href="/wallet" style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, letterSpacing: "0.08em" }}>Wallet</Link> */}
           {user?.role === "admin" && (<Link href="/admin/markets/create" style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, letterSpacing: "0.08em" }}>Create market</Link>)}
+          <p style={{ color: "#d4af37", fontSize: 14, letterSpacing: "0.08em" }}>{wallet ? parseFloat(wallet.balance).toFixed(2) : "-"} POLY</p>
         </div>
       </nav>
 

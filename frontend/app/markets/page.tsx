@@ -30,6 +30,7 @@ export default function MarketsListPage() {
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
         .button-full { background: #d4af37; color: #000000; }
+        .winning-outcome { background: #d4af37; color: #000000}
         .button-outline { border: 1px solid rgba(255,255,255,0.3); color: #e8e6e1; }
         .button { display: inline-block; padding: 11px 24px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.08em; }
         .market-card { border: 1px solid rgba(255,255,255,0.1); padding: 24px; transition: border-color 0.2s; text-decoration: none; color: inherit; display: block; }
@@ -40,10 +41,10 @@ export default function MarketsListPage() {
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <Link href="/dashboard" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
-          <Link href="/wallet" style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, letterSpacing: "0.08em" }}>Wallet</Link>
+          <Link href="/dashboard" style={{ color: "rgba(255, 255, 255, 0.4)", fontSize: 12, letterSpacing: "0.08em" }}>← Dashboard</Link>
+          {/* <Link href="/wallet" style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, letterSpacing: "0.08em" }}>Wallet</Link> */}
           {user?.role === "admin" && (<Link href="/admin/markets/create" style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, letterSpacing: "0.08em" }}>Create market</Link>)}
-          <Link href="/login" className="button button-full" style={{ fontSize: 11 }}>Account</Link>
-          <p style={{ color: "#d4af37", fontSize: 14, letterSpacing: "0.08em" }}>{wallet ? parseFloat(wallet.balance).toFixed(2) : "-"} POLY</p>
+          <p style={{ color: "#d4af37", fontSize: 13, letterSpacing: "0.08em" }}>{wallet ? parseFloat(wallet.balance).toFixed(2) : "-"} POLY</p>
         </div>
       </nav>
 
@@ -74,14 +75,14 @@ export default function MarketsListPage() {
             <Link key={market.id} href={`/markets/${market.id}`} className="market-card" style={{ background: "#0d0f14" }}>
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
                 <strong style={{ fontSize: 15, fontFamily: "'Playfair Display', serif", fontWeight: 400 }}>{market.title}</strong>
-                <span style={{ fontSize: 11, color: market.state === "OPEN" ? "#4ade80" : "rgba(255,255,255,0.3)", letterSpacing: "0.08em", marginLeft: 16, flexShrink: 0 }}>
+                <span style={{ fontSize: 11, color: market.state === "OPEN" ? "#4ade80" : market.state === "CLOSED" ? "#d05244" : market.state === "RESOLVED" ? "#d4af37" : "rgba(255,255,255,0.3)", letterSpacing: "0.08em", marginLeft: 16, flexShrink: 0 }}>
                   {market.state}
                 </span>
               </div>
               <p style={{ fontSize: 12, marginBottom: 16, color: "rgba(255,255,255,0.4)", lineHeight: 1.6 }}>{market.description}</p>
               <div style={{ display: "flex", gap: 8 }}>
                 {market.outcomes.map(o => (
-                  <span key={o.id} style={{ fontSize: 11, border: "1px solid rgba(255,255,255,0.15)", padding: "2px 10px", letterSpacing: "0.05em" }}>
+                  <span key={o.id} className={o.id === market.winning_outcome_id ? "button winning-outcome" : ""} style={{ fontSize: 11, border: "1px solid rgba(255,255,255,0.15)", padding: "2px 10px", letterSpacing: "0.05em" }}>
                     {o.name}
                   </span>
                 ))}

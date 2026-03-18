@@ -14,7 +14,7 @@ export default function LandingPage() {
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255, 255, 255, 0.1" }}>
         <Link href="/" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
         <a href="https://triskattie.com" style={{ color: "rgba(255, 255, 255, 0.3)", fontSize: 12, letterSpacing: "0.08em" }}>← triskattie.com</a>
-        <Link href="/markets" className="button button-full" style={{ fontSize: 11}}>Launch App</Link>
+        <Link href="/dashboard" className="button button-full" style={{ fontSize: 11}}>Launch App</Link>
       </nav>
 
       <section style={{ padding: "100px 48px 80px", maxWidth: 1000, margin: "0 auto" }}>
