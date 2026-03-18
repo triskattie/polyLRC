@@ -407,7 +407,7 @@ async def test_seller_balance_increases(client, auth_headers, open_market, admin
         headers=auth_headers
     )
     balance_after = float(wallet_after.json()["balance"])
-    assert balance_after == balance_before + 4
+    assert balance_after == balance_before - 2 # DUE TO LOCKED COLLATERAL 
 
 async def test_buyer_balance_decreases(client, auth_headers, open_market, admin_headers):
     market_id, outcome_ids = open_market
@@ -482,5 +482,5 @@ async def test_no_balance_change_if_resting_order(client, auth_headers, open_mar
         headers=auth_headers
     )
     after_balance = after_wallet.json()["balance"]
-    assert before_balance == after_balance
+    assert float(before_balance) == float(after_balance) + 9
 

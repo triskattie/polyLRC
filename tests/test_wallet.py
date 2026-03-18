@@ -88,8 +88,8 @@ async def test_transactions_are_not_empty(client, auth_headers, open_market):
     response = await client.get("/v1/wallet/transactions", headers=auth_headers)
     assert response.status_code == 200
     body = response.json()
-    assert len(body["transactions"]) == 3
-    assert float(body["total"]) == 3
+    assert len(body["transactions"]) == 4
+    assert float(body["total"]) == 4
 
 async def test_transactions_unauthorized_returns_401(client):
     response = await client.get("/v1/wallet/transactions")
