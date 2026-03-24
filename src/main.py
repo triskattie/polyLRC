@@ -12,13 +12,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-@app.get("/hit")
-async def root():
-    hits = await redis_manager.redis_pool.incr("hits")
-    return {"message": f"This page has been viewed {hits} times"}
-
-app.include_router(v1router)
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000", "http://192.168.2.36:3000", "https://polylrc.triskattie.com"],
@@ -26,3 +19,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/hit")
+async def root():
+    hits = await redis_manager.redis_pool.incr("hits")
+    return {"message": f"This page has been viewed {hits} times"}
+
+app.include_router(v1router)
+

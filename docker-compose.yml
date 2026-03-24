@@ -32,11 +32,12 @@ services:
         condition: service_healthy
     networks:
       - polylrc_internal
-      - web
+      - triskattie_web
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.polylrc_api.rule=Host(`polylrc.triskattie.com`) && PathPrefix(`/api`)"
       - "traefik.http.routers.polylrc_api.entrypoints=web"
+      - "traefik.http.routers.polylrc_api.priority=100"
       - "traefik.http.services.polylrc_api.loadbalancer.server.port=8000"
       - "traefik.http.middlewares.polylrc_strip.stripprefix.prefixes=/api"
       - "traefik.http.routers.polylrc_api.middlewares=polylrc_strip"
@@ -57,11 +58,12 @@ services:
       dockerfile: Dockerfile
     container_name: polylrc_frontend
     networks:
-      - web
+      - triskattie_web
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.polylrc_web.rule=Host(`polylrc.triskattie.com`)"
+      - "traefik.http.routers.polylrc_web.rule=Host(`polylrc.triskattie.com`) && PathPrefix(`/`) && !PathPrefix(`/api`)"
       - "traefik.http.routers.polylrc_web.entrypoints=web"
+      - "traefik.http.routers.polylrc_web.priority=1"
       - "traefik.http.services.polylrc_web.loadbalancer.server.port=3000"
     restart: on-failure
 
@@ -71,6 +73,6 @@ volumes:
 networks:
   polylrc_internal:
     driver: bridge
-  web:
+  triskattie_web:
     external: true
-    name: web
+    name: triskattie_web
