@@ -294,6 +294,7 @@ export default function MarketPage({ params }: { params: Promise<{ id: string }>
         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)" }}>PolyLRC - CS final project</span>
         <div style={{ display: "flex", gap: 20, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
           <a href="https://triskattie.com">triskattie.com</a>
+          <Link href="/feedback">Feedback</Link>
           <Link href="/markets">Markets</Link>
         </div>
       </footer>

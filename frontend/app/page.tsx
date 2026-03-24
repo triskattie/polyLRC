@@ -1,6 +1,15 @@
+'use client';
+
+import { useState } from 'react';
 import Link from "next/link"
 
 export default function LandingPage() {
+  const [isNotificationVisible, setIsNotificationVisible] = useState(true);
+
+  const handleCloseNotification = () => {
+    setIsNotificationVisible(false);
+  };
+
   return (
     <main style={{ fontFamily: "'IBM Plex Mono', monospace", background: "#0d0f14", color: "#e8e6e1", minHeight: "100vh" }}>
       <style>{`
@@ -10,6 +19,20 @@ export default function LandingPage() {
         .button-outline { border: 1px solid rgba(255,255,255, 0.3); }
         .button { display: inline-block; padding: 11px 24px; font-family: 'IBM Plex Mono', monospace; font-size: 12px, letter-spacing: 0.08em}
       `}</style>
+
+      {isNotificationVisible && (
+        <div style={{ background: "rgba(212, 175, 55, 0.1)", borderBottom: "1px solid rgba(212, 175, 55, 0.3)", padding: "16px 48px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <p style={{ fontSize: 12, color: "#d4af37", letterSpacing: "0.08em" }}>
+            Welcome to PolyLRC! If you'd like to submit feedback, you may do so by submitting the form in the footer or by pressing <Link href="/feedback" style={{ textDecoration: "underline" }}>this</Link>.
+          </p>
+          <button 
+            onClick={handleCloseNotification}
+            style={{ background: "none", border: "none", color: "#d4af37", fontSize: 18, cursor: "pointer", padding: "0 8px" }}
+          >
+            ×
+          </button>
+        </div>
+      )}
 
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255, 255, 255, 0.1" }}>
         <Link href="/" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
@@ -72,6 +95,7 @@ export default function LandingPage() {
         <span>PolyLRC - CS final project</span>
         <div style={{ display: "flex", gap: 20 }}>
           <a href="https://triskattie.com">triskattie.com</a>
+          <Link href="/feedback">Feedback</Link>
           <Link href="/register">Register</Link>
           <Link href="login">Login</Link>
         </div>
