@@ -53,7 +53,7 @@ export default function RegisterPage() {
         .button { display: inline-block; padding: 11px 24px; font-family: 'IBM Plex Mono', monospace; font-size: 14px; }
         input { width: 100%; padding: 10px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: inherit; }
         input:focus { outline: none; border-color: #d4af37; }
-        label { display: flex; flex-direction: column; gap: 8px; font-size: 11px; }, color: "#ffffff"
+        label { display: flex; flex-direction: column; gap: 8px; font-size: 11px; color: "#ffffff"}
       `}</style>
 
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
