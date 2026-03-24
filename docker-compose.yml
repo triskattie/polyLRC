@@ -1,6 +1,7 @@
 services:
   db:
     image: postgres:18
+    container_name: polylrc_db
     env_file:
       - .env
     volumes:
@@ -10,11 +11,16 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - polylrc_internal
+    restart: on-failure
+
   api:
     build: .
-    command: uvicorn src.main:app --reload --host 0.0.0.0
-    ports: 
-    - "8000:8000"
+    container_name: polylrc_api
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8001:8000"
     env_file:
       - .env
     environment:
@@ -22,11 +28,49 @@ services:
     volumes:
       - .:/app:Z
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - polylrc_internal
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.polylrc_api.rule=Host(`polylrc.triskattie.com`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.polylrc_api.entrypoints=web"
+      - "traefik.http.services.polylrc_api.loadbalancer.server.port=8000"
+      - "traefik.http.middlewares.polylrc_strip.stripprefix.prefixes=/api"
+      - "traefik.http.routers.polylrc_api.middlewares=polylrc_strip"
     restart: on-failure
+
   redis:
     image: redis:8-alpine
+    container_name: polylrc_redis
     ports:
       - "6379:6379"
+    networks:
+      - polylrc_internal
+    restart: on-failure
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: polylrc_frontend
+    networks:
+      - web
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.polylrc_web.rule=Host(`polylrc.triskattie.com`)"
+      - "traefik.http.routers.polylrc_web.entrypoints=web"
+      - "traefik.http.services.polylrc_web.loadbalancer.server.port=3000"
+    restart: on-failure
+
 volumes:
   postgres_data:
+
+networks:
+  polylrc_internal:
+    driver: bridge
+  web:
+    external: true
+    name: web
