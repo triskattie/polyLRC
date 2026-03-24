@@ -27,17 +27,25 @@ export default function RegisterPage() {
         email: form.email,
         password: form.password,
       })
-      setTokens(res.data.access_token, res.data.refresh_token)
+
+      await setTokens(res.data.access_token, res.data.refresh_token)
+
       router.push("/markets")
     } catch (err: any) {
-      setError(err.response?.data?.detail ?? "Registration failed.")
+      const detail = err.response?.data?.detail
+
+      if (Array.isArray(detail)) {
+        setError(detail[0]?.msg)
+      } else {
+        setError(detail ?? "Registration failed.")
+      }
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <main style={{ fontFamily: "'IBM Plex Mono', monospace", background: "#0d0f14", minHeight: "100vh" }}>
+    <main style={{ fontFamily: "'IBM Plex Mono', monospace", background: "#0d0f14", minHeight: "100vh", color: "#ffffff" }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,7 +53,7 @@ export default function RegisterPage() {
         .button { display: inline-block; padding: 11px 24px; font-family: 'IBM Plex Mono', monospace; font-size: 14px; }
         input { width: 100%; padding: 10px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: inherit; }
         input:focus { outline: none; border-color: #d4af37; }
-        label { display: flex; flex-direction: column; gap: 8px; font-size: 11px; }
+        label { display: flex; flex-direction: column; gap: 8px; font-size: 11px; }, color: "#ffffff"
       `}</style>
 
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
