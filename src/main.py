@@ -1,8 +1,11 @@
+from dotenv import load_dotenv
+load_dotenv()
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from src.api.v1 import router as v1router
 from src.db.redis import redis_manager
 from fastapi.middleware.cors import CORSMiddleware
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
