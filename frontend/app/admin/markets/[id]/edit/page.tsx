@@ -124,7 +124,6 @@ export default function EditMarketPage({ params }: { params: Promise<{ id: strin
               value={form.description}
               className={form.description !== original.description ? "changed" : ""}
               onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-              required
             />
           </label>
 
