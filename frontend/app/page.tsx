@@ -11,14 +11,7 @@ export default function LandingPage() {
   };
 
   return (
-    <main style={{ fontFamily: "'IBM Plex Mono', monospace", background: "#0d0f14", color: "#e8e6e1", minHeight: "100vh" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        .button-full { background: #d4af37; color: #000000}
-        .button-outline { border: 1px solid rgba(255,255,255, 0.3); }
-        .button { display: inline-block; padding: 11px 24px; font-family: 'IBM Plex Mono', monospace; font-size: 12px, letter-spacing: 0.08em}
-      `}</style>
+    <main className="app-shell">
 
       {isNotificationVisible && (
         <div style={{ background: "rgba(212, 175, 55, 0.1)", borderBottom: "1px solid rgba(212, 175, 55, 0.3)", padding: "16px 48px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -96,8 +89,10 @@ export default function LandingPage() {
         <div style={{ display: "flex", gap: 20 }}>
           <a href="https://triskattie.com">triskattie.com</a>
           <Link href="/feedback">Feedback</Link>
+          <Link href="/docs">Docs</Link>
+          <Link href="/markets">Markets</Link>
           <Link href="/register">Register</Link>
-          <Link href="login">Login</Link>
+          <Link href="/login">Login</Link>
         </div>
       </footer>
     </main>

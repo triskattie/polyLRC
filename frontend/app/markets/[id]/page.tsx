@@ -83,31 +83,12 @@ export default function MarketPage({ params }: { params: Promise<{ id: string }>
 	if (!market) return null
 
   return (
-    <main style={{ fontFamily: "'IBM Plex Mono', monospace", background: "#0d0f14", color: "#e8e6e1", minHeight: "100vh" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        .button-full { background: #d4af37; color: #000000; }
-        .button { display: inline-block; padding: 11px 24px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.08em; }
-        a { text-decoration: none; color: inherit; }
-        input, select { width: 100%; padding: 10px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #e8e6e1; }
-        input:focus, select:focus { outline: none; border-color: #d4af37; }
-        select option { background: #0d0f14; }
-        label { display: flex; flex-direction: column; gap: 8px; font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.08em; }
-        .tab { padding: 8px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; cursor: pointer; border: 1px solid rgba(255,255,255,0.15); background: transparent; color: rgba(255,255,255,0.4); transition: all 0.2s; }
-        .tab.active-buy { background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.4); color: #4ade80; }
-        .tab.active-sell { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.4); color: #f87171; }
-        .outcome-tab { padding: 6px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; cursor: pointer; border: 1px solid rgba(255,255,255,0.15); background: transparent; color: rgba(255,255,255,0.4); transition: all 0.2s; }
-        .outcome-tab.active { border-color: #d4af37; color: #d4af37; }
-        .ob-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 12px; }
-        .ob-row:last-child { border-bottom: none; }
-      `}</style>
+    <main className="app-shell">
 
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <Link href="/dashboard" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
           <Link href="/markets" style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, letterSpacing: "0.08em" }}>← Markets</Link>
-          {/* <Link href="/wallet" style={{ color: "rgba(255,255,255,0.4)", fontSize: 12 }}>Wallet</Link> */}
           {user?.role === "admin" && (
             <Link href="/admin/markets/create" style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, letterSpacing: "0.08em" }}>Create market</Link>
           )}
@@ -295,6 +276,7 @@ export default function MarketPage({ params }: { params: Promise<{ id: string }>
         <div style={{ display: "flex", gap: 20, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
           <a href="https://triskattie.com">triskattie.com</a>
           <Link href="/feedback">Feedback</Link>
+          <Link href="/docs">Docs</Link>
           <Link href="/markets">Markets</Link>
         </div>
       </footer>

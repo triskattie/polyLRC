@@ -51,18 +51,7 @@ export default function SeedMarketPage({ params }: { params: Promise<{ id: strin
 	if (!market) return null
 
 	return (
-		<main style={{ fontFamily: "'IBM Plex Mono', monospace", background: "#0d0f14", minHeight: "100vh"}}>
-			<style>{`
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        .button-full { background: #d4af37; color: #000000; }
-        .button-outline { border: 1px solid rgba(255,255,255,0.3); color: #e8e6e1; }
-        .button { display: inline-block; padding: 11px 24px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.08em; }
-        input, textarea { width: 100%; padding: 10px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #e8e6e1; }
-        input:focus, textarea:focus { outline: none; border-color: #d4af37; }
-        label { display: flex; flex-direction: column; gap: 8px; font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.08em; }
-        textarea { resize: vertical; min-height: 80px; }			
-			`}</style>
+		<main className="app-shell">
 
 			<nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
 				<Link href="/dashboard" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
@@ -146,6 +135,8 @@ export default function SeedMarketPage({ params }: { params: Promise<{ id: strin
 				<span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)" }}>PolyLRC - CS final project</span>
 				<div style={{ display: "flex", gap: 20, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
 					<a href="https://triskattie.com">triskattie.com</a>
+					<Link href="/feedback">Feedback</Link>
+					<Link href="/docs">Docs</Link>
 					<Link href="/markets">Markets</Link>
 				</div>
 			</footer>

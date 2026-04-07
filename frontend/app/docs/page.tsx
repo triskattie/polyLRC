@@ -13,29 +13,7 @@ const sections = [
 
 export default function DocsPage() {
   return (
-    <main style={{ fontFamily: "'IBM Plex Mono', monospace", background: "#0d0f14", color: "#e8e6e1", minHeight: "100vh" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        a { text-decoration: none; color: inherit; }
-        .button-full { background: #d4af37; color: #000000; }
-        .button { display: inline-block; padding: 11px 24px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.08em; }
-        h2 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 400; margin-bottom: 16px; color: #e8e6e1; }
-        p { font-size: 13px; line-height: 2; color: rgba(232,230,225,0.7); margin-bottom: 16px; }
-        .callout { border-left: 2px solid #d4af37; padding: 12px 20px; background: rgba(212,175,55,0.05); margin: 24px 0; }
-        .callout p { margin: 0; }
-        table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 12px; }
-        th { text-align: left; padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.4); font-weight: 400; letter-spacing: 0.08em; font-size: 11px; }
-        td { padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.06); color: rgba(232,230,225,0.7); }
-        .green { color: #4ade80; }
-        .red { color: #f87171; }
-        .gold { color: #d4af37; }
-        .section { padding: 60px 0; border-top: 1px solid rgba(255,255,255,0.06); }
-        .section:first-of-type { border-top: none; }
-        .toc-link { font-size: 12px; color: rgba(255,255,255,0.35); transition: color 0.2s; display: block; padding: 4px 0; }
-        .toc-link:hover { color: #d4af37; }
-        .num { font-size: 11px; color: rgba(212,175,55,0.4); margin-bottom: 12px; letter-spacing: 0.06em; }
-      `}</style>
+    <main className="app-shell docs-page">
 
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <Link href="/" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
@@ -261,6 +239,7 @@ export default function DocsPage() {
         <div style={{ display: "flex", gap: 20, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
           <a href="https://triskattie.com">triskattie.com</a>
           <Link href="/feedback">Feedback</Link>
+          <Link href="/docs">Docs</Link>
           <Link href="/markets">Markets</Link>
         </div>
       </footer>

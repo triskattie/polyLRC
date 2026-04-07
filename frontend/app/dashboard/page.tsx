@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { useQuery } from "@tanstack/react-query"
 import { api } from "@/lib/api"
-import type { MarketsPage, Market, WalletResponse, Order, User, TransactionsPage } from "@/lib/types"
+import type { MarketsPage, Market, WalletResponse, User, TransactionsPage } from "@/lib/types"
 
 export default function DashboardPage() {
   const { data: wallet } = useQuery<WalletResponse>({
@@ -16,11 +16,6 @@ export default function DashboardPage() {
     queryFn: async () => (await api.get("/markets", { params: { state: "OPEN", limit: 5 } })).data,
   })
 
-  // const { data: orders } = useQuery<Order[]>({
-  //   queryKey: ["orders", "recent"],
-  //   queryFn: async () => (await api.get("/orders", { params: { limit: 5 } })).data,
-  // })
-
   const { data: transactions } = useQuery<TransactionsPage>({
     queryKey: ["transactions"],
     queryFn: async () => (await api.get("/wallet/transactions")).data,
@@ -32,27 +27,12 @@ export default function DashboardPage() {
   })
 
   return (
-    <main style={{ fontFamily: "'IBM Plex Mono', monospace", background: "#0d0f14", color: "#e8e6e1", minHeight: "100vh" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        .button-full { background: #d4af37; color: #000000; }
-        .button { display: inline-block; padding: 11px 24px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.08em; }
-        a { text-decoration: none; color: inherit; }
-        .card { border: 1px solid rgba(255,255,255,0.1); padding: 24px; }
-        .row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 12px; }
-        .row:last-child { border-bottom: none; }
-        .section-title { font-size: 11px; color: rgba(255,255,255,0.3); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; }
-        .dim { color: rgba(255,255,255,0.4); }
-        .green { color: #4ade80; }
-        .gold { color: #d4af37; }
-      `}</style>
+    <main className="app-shell">
 
       <nav style={{ display: "flex", justifyContent: "space-between", padding: "22px 48px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <Link href="/" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
         <div style={{ display: "flex", gap: 24}}>
           <Link href="/markets" style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, letterSpacing: "0.08em" }}>Markets</Link>
-          {/* <Link href="/wallet" style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, letterSpacing: "0.08em" }}>Wallet</Link> */}
           {user?.role === "admin" && (<Link href="/admin/markets/create" style={{ color: "rgba(255,255,255,0.4)", fontSize: 12, letterSpacing: "0.08em" }}>Create market</Link>)}
           <p style={{ color: "#d4af37", fontSize: 14, letterSpacing: "0.08em" }}>{wallet ? parseFloat(wallet.balance).toFixed(2) : "-"} POLY</p>
         </div>
@@ -67,7 +47,7 @@ export default function DashboardPage() {
         <div className="card" style={{ marginBottom: 24 }}>
           <div className="section-title">
             <span>Wallet balance</span>
-            <Link href="/wallet" className="dim" style={{ fontSize: 11 }}>View all →</Link>
+            <span className="dim" style={{ fontSize: 11 }}>Tracked live</span>
           </div>
           <p style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 300, color: "#d4af37" }}>
             {wallet ? parseFloat(wallet.balance).toFixed(2) : "-"}
@@ -113,6 +93,8 @@ export default function DashboardPage() {
         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)" }}>PolyLRC - CS final project</span>
         <div style={{ display: "flex", gap: 20, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
           <a href="https://triskattie.com">triskattie.com</a>
+          <Link href="/feedback">Feedback</Link>
+          <Link href="/docs">Docs</Link>
           <Link href="/markets">Markets</Link>
         </div>
       </footer>

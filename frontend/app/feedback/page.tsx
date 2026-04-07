@@ -1,8 +1,7 @@
 "use client"
 
-import { use, useState, useEffect } from "react"
+import { useState } from "react"
 import { useQuery } from "@tanstack/react-query"
-import { useRouter } from "next/navigation"
 import { api } from "@/lib/api"
 import type { User } from "@/lib/types"
 import Link from "next/link"
@@ -17,66 +16,51 @@ export default function GiveFeedbackPage() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
 
-const { data: user } = useQuery<User>({
-  queryKey: ["me"],
-  queryFn: async () => (await api.get("/users/me")).data,
-})
+  const { data: user } = useQuery<User>({
+    queryKey: ["me"],
+    queryFn: async () => (await api.get("/users/me")).data,
+  })
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault()
-  setError(null)
-  setSuccess(false)
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    setSuccess(false)
 
-  if (!form.description.trim()) {
-    setError("Please enter your feedback.")
-    return
-  }
+    if (!form.description.trim()) {
+      setError("Please enter your feedback.")
+      return
+    }
 
-  const webhookUrl = process.env.NEXT_PUBLIC_DISCORD_WEBHOOK_URL
-  if (!webhookUrl) {
-    setError("Webhook URL not configured.")
-    return
-  }
+    const webhookUrl = process.env.NEXT_PUBLIC_DISCORD_WEBHOOK_URL
+    if (!webhookUrl) {
+      setError("Webhook URL not configured.")
+      return
+    }
 
-  setLoading(true)
-  try {
-    const res = await fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        content: `**New Feedback**\nUser ID: ${user?.user_id}\nEmail: ${user?.email}\nType: ${form.type}\nPage: ${form.page}\nFeedback: ${form.description}`
+    setLoading(true)
+    try {
+      const res = await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          content: `**New Feedback**\nUser ID: ${user?.user_id}\nEmail: ${user?.email}\nType: ${form.type}\nPage: ${form.page}\nFeedback: ${form.description}`,
+        }),
       })
-    })
-    
-    if (!res.ok) throw new Error("Failed to send feedback")
-    
-    setForm({ type: "", description: "", page: "" })
-    setSuccess(true)
-    setTimeout(() => setSuccess(false), 4000)
-  } catch (err: any) {
-    setError("Failed to send feedback. Try again.")
-  } finally {
-    setLoading(false)
+
+      if (!res.ok) throw new Error("Failed to send feedback")
+
+      setForm({ type: "", description: "", page: "" })
+      setSuccess(true)
+      setTimeout(() => setSuccess(false), 4000)
+    } catch {
+      setError("Failed to send feedback. Try again.")
+    } finally {
+      setLoading(false)
+    }
   }
-}
 
   return (
-    <main style={{ fontFamily: "'IBM Plex Mono', monospace", background: "#0d0f14", color: "#e8e6e1", minHeight: "100vh" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        .button-full { background: #d4af37; color: #000000; }
-        .button-outline { border: 1px solid rgba(255,255,255,0.3); color: #e8e6e1; }
-        .button { display: inline-block; padding: 11px 24px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.08em; }
-        a { text-decoration: none; color: inherit; }
-        input, textarea, select { width: 100%; padding: 10px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #e8e6e1; }
-        input:focus, textarea:focus, select:focus { outline: none; border-color: #d4af37; }
-        input.changed, textarea.changed, select.changed { border-color: rgba(212,175,55,0.5); }
-        select option { background: #0d0f14; }
-        label { display: flex; flex-direction: column; gap: 8px; font-size: 11px; color: rgba(255,255,255,0.4); letter-spacing: 0.08em; }
-        textarea { resize: vertical; min-height: 80px; }
-      `}</style>
-
+    <main className="app-shell">
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <Link href="/dashboard" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
       </nav>
@@ -123,17 +107,8 @@ const handleSubmit = async (e: React.FormEvent) => {
             />
           </label>
 
-          {error && (
-            <p style={{ fontSize: 12, color: "#f87171", padding: "10px 14px", border: "1px solid rgba(248,113,113,0.2)" }}>
-              {error}
-            </p>
-          )}
-
-          {success && (
-            <p style={{ fontSize: 12, color: "#4ade80", padding: "10px 14px", border: "1px solid rgba(74,222,128,0.2)" }}>
-              Thanks for your feedback!
-            </p>
-          )}
+          {error && <p className="form-error">{error}</p>}
+          {success && <p className="form-success">Thanks for your feedback!</p>}
 
           <div>
             <button
@@ -152,6 +127,8 @@ const handleSubmit = async (e: React.FormEvent) => {
         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)" }}>PolyLRC - CS final project</span>
         <div style={{ display: "flex", gap: 20, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
           <a href="https://triskattie.com">triskattie.com</a>
+          <Link href="/feedback">Feedback</Link>
+          <Link href="/docs">Docs</Link>
           <Link href="/markets">Markets</Link>
         </div>
       </footer>

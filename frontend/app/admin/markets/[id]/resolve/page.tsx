@@ -55,71 +55,7 @@ export default function ResolveMarketPage({ params }: { params: Promise<{ id: st
   if (!market) return null
 
   return (
-    <main style={{ fontFamily: "'IBM Plex Mono', monospace", background: "#0d0f14", color: "#e8e6e1", minHeight: "100vh" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        .button-full { background: #d4af37; color: #000000; }
-        .button-outline { border: 1px solid rgba(255,255,255,0.3); color: #e8e6e1; }
-        .button-danger { background: rgba(248,113,113,0.1); border: 1px solid rgba(248,113,113,0.4); color: #f87171; }
-        .button { display: inline-block; padding: 11px 24px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; letter-spacing: 0.08em; cursor: pointer; transition: all 0.2s; }
-        .button:hover:not(:disabled) { transform: translateY(-1px); }
-        .button:disabled { opacity: 0.5; cursor: not-allowed; }
-        a { text-decoration: none; color: inherit; }
-        
-        .outcome-option {
-          position: relative;
-          display: block;
-          padding: 16px;
-          margin-bottom: 12px;
-          border: 1px solid rgba(255,255,255,0.15);
-          background: transparent;
-          color: #e8e6e1;
-          cursor: pointer;
-          transition: all 0.2s;
-          font-family: 'IBM Plex Mono', monospace;
-          font-size: 13px;
-          text-align: left;
-        }
-        .outcome-option:hover {
-          border-color: rgba(212,175,55,0.4);
-          background: rgba(212,175,55,0.05);
-        }
-        .outcome-option input {
-          margin-right: 12px;
-          cursor: pointer;
-          accent-color: #d4af37;
-        }
-        .outcome-option.selected {
-          border-color: #d4af37;
-          background: rgba(212,175,55,0.1);
-        }
-        .outcome-name {
-          display: flex;
-          align-items: center;
-          font-weight: 500;
-          letter-spacing: 0.05em;
-        }
-        .outcome-description {
-          display: block;
-          margin-top: 8px;
-          font-size: 12px;
-          color: rgba(255,255,255,0.4);
-          margin-left: 24px;
-        }
-        
-        .status-badge {
-          display: inline-block;
-          padding: 6px 12px;
-          font-size: 10px;
-          letter-spacing: 0.08em;
-          border-radius: 2px;
-          text-transform: uppercase;
-          font-weight: 500;
-        }
-        .status-closed { background: rgba(100,116,139,0.2); color: #cbd5e1; }
-        .status-resolved { background: rgba(74,222,128,0.15); color: #4ade80; }
-      `}</style>
+    <main className="app-shell">
 
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
         <Link href="/dashboard" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
@@ -253,6 +189,8 @@ export default function ResolveMarketPage({ params }: { params: Promise<{ id: st
         <span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)" }}>PolyLRC - CS final project</span>
         <div style={{ display: "flex", gap: 20, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
           <a href="https://triskattie.com">triskattie.com</a>
+          <Link href="/feedback">Feedback</Link>
+          <Link href="/docs">Docs</Link>
           <Link href="/markets">Markets</Link>
         </div>
       </footer>

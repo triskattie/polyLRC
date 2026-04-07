@@ -45,35 +45,25 @@ export default function RegisterPage() {
   }
 
   return (
-    <main style={{ fontFamily: "'IBM Plex Mono', monospace", background: "#0d0f14", minHeight: "100vh", color: "#ffffff" }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;1,400&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        .button-full { background: #d4af37; color: #000000; }
-        .button { display: inline-block; padding: 11px 24px; font-family: 'IBM Plex Mono', monospace; font-size: 14px; }
-        input { width: 100%; padding: 10px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; background: transparent; border: 1px solid rgba(255,255,255,0.2); color: inherit; }
-        input:focus { outline: none; border-color: #d4af37; }
-        label { display: flex; flex-direction: column; gap: 8px; font-size: 11px; color: "#ffffff"}
-      `}</style>
-
-      <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "22px 48px", borderBottom: "1px solid rgba(255,255,255,0.1)" }}>
-        <Link href="/" style={{ color: "#d4af37", fontSize: 13, fontWeight: 500, letterSpacing: "0.08em" }}>POLYLRC</Link>
-        <a href="https://triskattie.com" style={{ color: "rgba(255, 255, 255, 0.3)", fontSize: 12, letterSpacing: "0.08em" }}>← triskattie.com</a>
+    <main className="auth-shell">
+      <nav className="auth-nav">
+        <Link href="/" className="site-brand">POLYLRC</Link>
+        <a href="https://triskattie.com" className="site-nav-link">← triskattie.com</a>
       </nav>
 
-      <section style={{ padding: "100px 48px", maxWidth: 480, margin: "0 auto" }}>
-        <p style={{ fontSize: 13, marginBottom: 25, color: "#d4af37" }}>CS FINAL PROJECT - PREDICTION MARKET</p>
-        <h1 style={{ fontFamily: "'Playfair Display', serif", fontSize: "clamp(32px, 5vw, 48px)", fontWeight: 400, lineHeight: 1.05, marginBottom: 25 }}>
-          Create an <em style={{ color: "#d4af37" }}>account.</em>
+      <section className="auth-panel">
+        <p className="auth-eyebrow">CS FINAL PROJECT - PREDICTION MARKET</p>
+        <h1 className="auth-title">
+          Create an <em className="accent">account.</em>
         </h1>
-        <p style={{ marginBottom: 40 }}>
-          Already have an account? <Link href="/login" style={{ color: "#d4af37" }}>Sign in</Link>
+        <p className="auth-copy">
+          Already have an account? <Link href="/login" className="accent">Sign in</Link>
         </p>
 
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-          <label>
+        <form onSubmit={handleSubmit} className="auth-form">
+          <label className="auth-label">
             Email
-            <input
+            <input className="auth-input"
               type="email"
               autoComplete="email"
               value={form.email}
@@ -81,9 +71,9 @@ export default function RegisterPage() {
               required
             />
           </label>
-          <label>
+          <label className="auth-label">
             Password
-            <input
+            <input className="auth-input"
               type="password"
               autoComplete="new-password"
               value={form.password}
@@ -91,9 +81,9 @@ export default function RegisterPage() {
               required
             />
           </label>
-          <label>
+          <label className="auth-label">
             Confirm password
-            <input
+            <input className="auth-input"
               type="password"
               autoComplete="new-password"
               value={form.confirm}
@@ -103,7 +93,7 @@ export default function RegisterPage() {
           </label>
 
           {error && (
-            <p style={{ fontSize: 12, color: "#f87171", padding: "10px 14px", border: "1px solid rgba(248,113,113,0.2)" }}>
+            <p className="auth-error">
               {error}
             </p>
           )}
@@ -111,8 +101,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="button button-full"
-            style={{ opacity: loading ? 0.6 : 1, cursor: loading ? "not-allowed" : "pointer", marginTop: 8 }}
+            className="button button-full auth-submit"
           >
             {loading ? "Creating account..." : "Create account"}
           </button>
