@@ -37,7 +37,3 @@ async def get_user_by_uuid(db: AsyncSession, user_id: uuid.UUID):
 async def get_refresh_token_by_hash(db: AsyncSession, refresh_token_hash):
     result = await db.execute(select(RefreshToken).where(RefreshToken.token_hash == refresh_token_hash))
     return result.scalar_one_or_none()
-
-async def revoke_refresh_token(db: AsyncSession, token: RefreshToken):
-    token.revoked = True
-    await db.flush()

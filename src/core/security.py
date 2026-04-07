@@ -56,6 +56,3 @@ def hash_token(token: str):
 
 def check_password(password, password_hash):
     return bcrypt.checkpw(password.encode("utf-8"), password_hash.encode("utf-8"))
-
-def refresh_token_valid(refresh_token):
-    refresh_token_hash = hash_token(refresh_token)
