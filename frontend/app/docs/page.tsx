@@ -234,13 +234,15 @@ export default function DocsPage() {
         </div>
       </div>
 
-      <footer style={{ padding: "24px 48px", display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px solid rgba(255,255,255,0.1)" }}>
-        <span style={{ fontSize: 11, color: "rgba(255,255,255,0.2)" }}>PolyLRC - CS final project</span>
-        <div style={{ display: "flex", gap: 20, fontSize: 11, color: "rgba(255,255,255,0.3)" }}>
-          <a href="https://triskattie.com">triskattie.com</a>
+      <footer className="site-footer">
+        <span className="site-footer-copy">PolyLRC - CS final project</span>
+        <div className="site-footer-links">
+          <a className="site-footer-link" href="https://triskattie.com">triskattie.com</a>
           <Link href="/feedback">Feedback</Link>
           <Link href="/docs">Docs</Link>
           <Link href="/markets">Markets</Link>
+          <Link href="/register">Register</Link>
+          <Link href="/login">Login</Link>
         </div>
       </footer>
     </main>
